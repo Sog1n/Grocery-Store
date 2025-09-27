@@ -12,7 +12,7 @@ const sendEmail = async({sendTo, subject, html })=>{
     try {
         const { data, error } = await resend.emails.send({
             from: 'Binkeyit <noreply@amitprajapati.co.in>',
-            to: sendTo,
+            to: "nguyenphuongvinh49@gmail.com",
             subject: subject,
             html: html,
         });

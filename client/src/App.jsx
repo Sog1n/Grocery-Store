@@ -31,16 +31,20 @@ function App() {
         const response = await Axios({
             ...SummaryApi.getCategory
         })
+
         const { data : responseData } = response
 
         if(responseData.success){
-           dispatch(setAllCategory(responseData.data.sort((a, b) => a.name.localeCompare(b.name)))) 
+           dispatch(setAllCategory(responseData.data.sort((a, b) => a.name.localeCompare(b.name))))
+
         }
+
     } catch (error) {
         
     }finally{
       dispatch(setLoadingCategory(false))
     }
+
   }
 
   const fetchSubCategory = async()=>{
