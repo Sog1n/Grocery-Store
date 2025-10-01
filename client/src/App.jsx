@@ -6,7 +6,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
 import fetchUserDetails from './utils/fetchUserDetails';
 import { setUserDetails } from './store/userSlice';
-import { setAllCategory,setAllSubCategory,setLoadingCategory } from './store/productSlice';
+import { setAllCategory, setAllSubCategory, setLoadingCategory } from './store/productSlice';
 import { useDispatch } from 'react-redux';
 import Axios from './utils/Axios';
 import SummaryApi from './common/SummaryApi';
@@ -18,73 +18,77 @@ import CartMobileLink from './components/CartMobile';
 function App() {
   const dispatch = useDispatch()
   const location = useLocation()
-  
 
-  const fetchUser = async()=>{
-      const userData = await fetchUserDetails()
-      dispatch(setUserDetails(userData.data))
+
+  const adminPaths = ["/admin"]
+  const RemoveButtonMyCart = ["/dashboard/profile", "/dashboard/my-orders", "/dashboard/address", "/dashboard/category", "/dashboard/sub-category", "/dashboard/upload-product", "/dashboard/product-admin"]
+
+  const hideLayout = adminPaths.includes(location.pathname)
+  const hideButton = RemoveButtonMyCart.includes(location.pathname)
+
+  const fetchUser = async () => {
+    const userData = await fetchUserDetails()
+    dispatch(setUserDetails(userData.data))
   }
 
-  const fetchCategory = async()=>{
+  const fetchCategory = async () => {
     try {
-        dispatch(setLoadingCategory(true))
-        const response = await Axios({
-            ...SummaryApi.getCategory
-        })
+      dispatch(setLoadingCategory(true))
+      const response = await Axios({
+        ...SummaryApi.getCategory
+      })
 
-        const { data : responseData } = response
+      const { data: responseData } = response
 
-        if(responseData.success){
-           dispatch(setAllCategory(responseData.data.sort((a, b) => a.name.localeCompare(b.name))))
+      if (responseData.success) {
+        dispatch(setAllCategory(responseData.data.sort((a, b) => a.name.localeCompare(b.name))))
 
-        }
+      }
 
     } catch (error) {
-        
-    }finally{
+
+    } finally {
       dispatch(setLoadingCategory(false))
     }
 
   }
 
-  const fetchSubCategory = async()=>{
+  const fetchSubCategory = async () => {
     try {
-        const response = await Axios({
-            ...SummaryApi.getSubCategory
-        })
-        const { data : responseData } = response
+      const response = await Axios({
+        ...SummaryApi.getSubCategory
+      })
+      const { data: responseData } = response
 
-        if(responseData.success){
-           dispatch(setAllSubCategory(responseData.data.sort((a, b) => a.name.localeCompare(b.name)))) 
-        }
+      if (responseData.success) {
+        dispatch(setAllSubCategory(responseData.data.sort((a, b) => a.name.localeCompare(b.name))))
+      }
     } catch (error) {
-        
-    }finally{
+
+    } finally {
     }
   }
 
-  
 
-  useEffect(()=>{
+
+  useEffect(() => {
     fetchUser()
     fetchCategory()
     fetchSubCategory()
     // fetchCartItem()
-  },[])
+  }, [])
 
   return (
-    <GlobalProvider> 
-      <Header/>
+    <GlobalProvider>
+      {!hideLayout && <Header />}
       <main className='min-h-[78vh]'>
-          <Outlet/>
+        <Outlet />
       </main>
-      <Footer/>
-      <Toaster/>
-      {
-        location.pathname !== '/checkout' && (
-          <CartMobileLink/>
-        )
-      }
+      {!hideLayout && <Footer />}
+      <Toaster />
+      {!hideButton && location.pathname !== '/checkout' && (
+        <CartMobileLink />
+      )}
     </GlobalProvider>
   )
 }
