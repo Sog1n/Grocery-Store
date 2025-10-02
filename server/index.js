@@ -15,6 +15,8 @@ import cartRouter from './route/cart.route.js'
 import addressRouter from './route/address.route.js'
 import orderRouter from './route/order.route.js'
 import adminRouter from './route/admin.route.js'
+import seedUsers from './utils/seedUsers.js'
+import seedProducts from './utils/seedProducts.js'
 
 const app = express()
 app.use(cors({
@@ -46,7 +48,13 @@ app.use("/api/cart",cartRouter)
 app.use("/api/address",addressRouter)
 app.use('/api/order',orderRouter)
 app.use('/api/admin',adminRouter)
-connectDB().then(()=>{
+connectDB().then(async()=>{
+    // Tạo admin và user mặc định
+    await seedUsers()
+    
+    // Tạo dữ liệu sản phẩm mẫu
+    await seedProducts()
+    
     app.listen(PORT,()=>{
         console.log("Server is running",PORT)
     })
