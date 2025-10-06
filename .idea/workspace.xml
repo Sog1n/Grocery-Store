@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="7c4e78aa-5886-4428-98c7-20685e3cfb87" name="Changes" comment="delete demo" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="Giai-đoạn-1-Cơ-bản---User-&amp;-Auth" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Sog1n&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Sog1n/taphoa_test.git&quot;,
+    &quot;accountId&quot;: &quot;fa63e46b-47ac-4aaa-9498-b6798fef02f9&quot;
+  }
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="333uZNVkYYnvzbPDgYkFCXtpSuI" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/DATA VINH/Desktop/2025 - 2026/hoc ki 1/Testing/Bai tap/De Tai/BlinkIt-Clone-Full-Stack-Ecommerce-main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2024.2.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\DATA VINH\Desktop\2025 - 2026\hoc ki 1\Testing\Bai tap\De Tai\BlinkIt-Clone-Full-Stack-Ecommerce-main\client" />
+      <recent name="D:\DATA VINH\Desktop\2025 - 2026\hoc ki 1\Testing\Bai tap\De Tai\BlinkIt-Clone-Full-Stack-Ecommerce-main\server" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-b114ca120d71-intellij.indexing.shared.core-IU-242.21829.142" />
+        <option value="bundled-js-predefined-d6986cc7102b-7c0b70fcd90d-JavaScript-IU-242.21829.142" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="7c4e78aa-5886-4428-98c7-20685e3cfb87" name="Changes" comment="" />
+      <created>1758558136888</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1758558136888</updated>
+      <workItem from="1758558138842" duration="2254000" />
+      <workItem from="1758610425016" duration="4394000" />
+      <workItem from="1758674274122" duration="520000" />
+      <workItem from="1758718210442" duration="123000" />
+      <workItem from="1758900991343" duration="791000" />
+      <workItem from="1758982949612" duration="16000" />
+      <workItem from="1758982977391" duration="10258000" />
+      <workItem from="1759063346971" duration="6677000" />
+      <workItem from="1759076768796" duration="2103000" />
+      <workItem from="1759755698127" duration="1437000" />
+      <workItem from="1759759244258" duration="663000" />
+      <workItem from="1759759930607" duration="1197000" />
+      <workItem from="1759761150934" duration="95000" />
+      <workItem from="1759761261099" duration="1768000" />
+    </task>
+    <task id="LOCAL-00001" summary="init">
+      <option name="closed" value="true" />
+      <created>1758559610536</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1758559610536</updated>
+    </task>
+    <task id="LOCAL-00002" summary="set file .env">
+      <option name="closed" value="true" />
+      <created>1758993172928</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1758993172928</updated>
+    </task>
+    <task id="LOCAL-00003" summary="set file .env">
+      <option name="closed" value="true" />
+      <created>1759756898386</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1759756898386</updated>
+    </task>
+    <task id="LOCAL-00004" summary="set file .env">
+      <option name="closed" value="true" />
+      <created>1759756962878</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1759756962878</updated>
+    </task>
+    <task id="LOCAL-00005" summary="delete demo">
+      <option name="closed" value="true" />
+      <created>1759762409584</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1759762409585</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="first commit" />
+    <MESSAGE value="init" />
+    <MESSAGE value="set file .env" />
+    <MESSAGE value="delete demo" />
+    <option name="LAST_COMMIT_MESSAGE" value="delete demo" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
