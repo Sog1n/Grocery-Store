@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:latest
+    container_name: taphoa_mongodb
+    restart: always
+    ports:
+      - "${MONGODB_PORT}:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - taphoa_network
+
+  # Backend Server
+  backend:
+    build:
+      context: ../taphoa_test/server
+      dockerfile: ../taphoa_test/server/Dockerfile
+    container_name: taphoa_backend
+    restart: always
+    ports:
+      - "${BACKEND_PORT}:8080"
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - MONGODB_URI=${MONGODB_URI}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - PORT=${PORT}
+      - SECRET_KEY_ACCESS_TOKEN=${SECRET_KEY_ACCESS_TOKEN}
+      - SECRET_KEY_REFRESH_TOKEN=${SECRET_KEY_REFRESH_TOKEN}
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      - RESEND_API=${RESEND_API}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_ENDPOINT_WEBHOOK_SECRET_KEY=${STRIPE_ENDPOINT_WEBHOOK_SECRET_KEY}
+    depends_on:
+      - mongodb
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    networks:
+      - taphoa_network
+
+  # Frontend Client
+  frontend:
+    build:
+      context: ../taphoa_test/client
+      dockerfile: ../taphoa_test/client/Dockerfile
+    container_name: taphoa_frontend
+    restart: always
+    ports:
+      - "${FRONTEND_PORT}:5173"
+    environment:
+      - VITE_API_URL=${VITE_API_URL}
+      - VITE_STRIPE_PUBLIC_KEY=${VITE_STRIPE_PUBLIC_KEY}
+    depends_on:
+      - backend
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    networks:
+      - taphoa_network
+
+networks:
+  taphoa_network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
