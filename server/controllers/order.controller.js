@@ -4,48 +4,92 @@ import OrderModel from "../models/order.model.js";
 import UserModel from "../models/user.model.js";
 import mongoose from "mongoose";
 
- export async function CashOnDeliveryOrderController(request,response){
-    try {
-        const userId = request.userId // auth middleware 
-        const { list_items, totalAmt, addressId,subTotalAmt } = request.body 
+//  export async function CashOnDeliveryOrderController(request,response){
+//     try {
+//         const userId = request.userId // auth middleware 
+//         const { list_items, totalAmt, addressId,subTotalAmt } = request.body 
 
-        const payload = list_items.map(el => {
-            return({
-                userId : userId,
-                orderId : `ORD-${new mongoose.Types.ObjectId()}`,
-                productId : el.productId._id, 
-                product_details : {
-                    name : el.productId.name,
-                    image : el.productId.image
-                } ,
-                paymentId : "",
-                payment_status : "CASH ON DELIVERY",
-                delivery_address : addressId ,
-                subTotalAmt  : subTotalAmt,
-                totalAmt  :  totalAmt,
-            })
-        })
+//         const payload = list_items.map(el => {
+//             console.log(el.quantity);
+//             return({
+//                 userId : userId,
+//                 orderId : `ORD-${new mongoose.Types.ObjectId()}`,
+//                 productId : el.productId._id, 
+//                 product_details : {
+//                     name : el.productId.name,
+//                     image : el.productId.image,
+//                     quantity : el.quantity
+//                 } ,
+//                 paymentId : "",
+//                 payment_status : "CASH ON DELIVERY",
+//                 delivery_address : addressId ,
+//                 subTotalAmt  : subTotalAmt,
+//                 totalAmt  :  totalAmt,
+//             })
+//         })
 
-        const generatedOrder = await OrderModel.insertMany(payload)
+//         const generatedOrder = await OrderModel.insertMany(payload)
 
-        ///remove from the cart
-        const removeCartItems = await CartProductModel.deleteMany({ userId : userId })
-        const updateInUser = await UserModel.updateOne({ _id : userId }, { shopping_cart : []})
+//         ///remove from the cart
+//         const removeCartItems = await CartProductModel.deleteMany({ userId : userId })
+//         const updateInUser = await UserModel.updateOne({ _id : userId }, { shopping_cart : []})
 
-        return response.json({
-            message : "Order successfully",
-            error : false,
-            success : true,
-            data : generatedOrder
-        })
+//         return response.json({
+//             message : "Order successfully",
+//             error : false,
+//             success : true,
+//             data : generatedOrder
+//         })
 
-    } catch (error) {
-        return response.status(500).json({
-            message : error.message || error ,
-            error : true,
-            success : false
-        })
-    }
+//     } catch (error) {
+//         return response.status(500).json({
+//             message : error.message || error ,
+//             error : true,
+//             success : false
+//         })
+//     }
+// }
+
+export async function CashOnDeliveryOrderController(req, res) {
+  try {
+    const userId = req.userId;
+    const { list_items, totalAmt, addressId, subTotalAmt } = req.body;
+
+    // Tạo mảng sản phẩm cho đơn hàng
+    const items = list_items.map(el => ({
+      productId: el.productId._id,
+      name: el.productId.name,
+      image: el.productId.image,
+      quantity: el.quantity,
+      price: el.productId.price,
+      subTotal: el.productId.price * el.quantity
+    }));
+
+    const orderPayload = {
+      userId,
+      orderId: `ORD-${new mongoose.Types.ObjectId()}`,
+      items,
+      paymentId: '',
+      payment_status: 'CASH ON DELIVERY',
+      delivery_address: addressId,
+      subTotalAmt,
+      totalAmt
+    };
+
+    const generatedOrder = await OrderModel.create(orderPayload);
+
+    // Xóa cart
+    await CartProductModel.deleteMany({ userId });
+    await UserModel.updateOne({ _id: userId }, { shopping_cart: [] });
+
+    return res.json({
+      message: 'Order created successfully',
+      success: true,
+      data: generatedOrder
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message, success: false });
+  }
 }
 
 export const pricewithDiscount = (price,dis = 1)=>{
@@ -68,6 +112,7 @@ export async function paymentController(request,response){
                     product_data : {
                         name : item.productId.name,
                         images : item.productId.image,
+                        quantity : item.quantity,
                         metadata : {
                             productId : item.productId._id
                         }
@@ -197,6 +242,26 @@ export async function getOrderDetailsController(request,response){
             data : orderlist,
             error : false,
             success : true
+        })
+    } catch (error) {
+        return response.status(500).json({
+            message : error.message || error,
+            error : true,
+            success : false
+        })
+    }
+}
+
+export async function getAllOrdersAdminController(request,response){
+    try {
+        // return all orders for admin view, populate user and address
+        const orderlist = await OrderModel.find({}).sort({ createdAt : -1 }).populate('delivery_address').populate('userId', '-password -shopping_cart -orderHistory')
+
+        return response.json({
+            message: 'all order list',
+            data: orderlist,
+            error: false,
+            success: true
         })
     } catch (error) {
         return response.status(500).json({
