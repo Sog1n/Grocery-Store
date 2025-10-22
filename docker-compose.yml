@@ -16,28 +16,17 @@ services:
     networks:
       - taphoa_network
 
-  # Backend Server
-  backend:
+  # Backend Server (Client)
+  backend_client:
     build:
       context: ./server
       dockerfile: Dockerfile
-    container_name: taphoa_backend
+    container_name: taphoa_backend_client
     restart: always
     ports:
       - "${BACKEND_PORT}:8080"
-    environment:
-      - NODE_ENV=${NODE_ENV}
-      - MONGODB_URI=${MONGODB_URI}
-      - FRONTEND_URL=${FRONTEND_URL}
-      - PORT=${PORT}
-      - SECRET_KEY_ACCESS_TOKEN=${SECRET_KEY_ACCESS_TOKEN}
-      - SECRET_KEY_REFRESH_TOKEN=${SECRET_KEY_REFRESH_TOKEN}
-      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
-      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
-      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
-      - RESEND_API=${RESEND_API}
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_ENDPOINT_WEBHOOK_SECRET_KEY=${STRIPE_ENDPOINT_WEBHOOK_SECRET_KEY}
+    env_file:
+      - ./server/.env
     depends_on:
       - mongodb
     volumes:
@@ -47,21 +36,58 @@ services:
       - taphoa_network
 
   # Frontend Client
-  frontend:
+  frontend_client:
     build:
       context: ./client
       dockerfile: Dockerfile
-    container_name: taphoa_frontend
+    container_name: taphoa_frontend_client
     restart: always
     ports:
       - "${FRONTEND_PORT}:5173"
-    environment:
-      - VITE_API_URL=${VITE_API_URL}
-      - VITE_STRIPE_PUBLIC_KEY=${VITE_STRIPE_PUBLIC_KEY}
+    env_file:
+      - ./client/.env
     depends_on:
-      - backend
+      - backend_client
     volumes:
       - ./client:/app
+      - /app/node_modules
+    networks:
+      - taphoa_network
+
+  # Backend Server (Admin)
+  backend_admin:
+    build:
+      context: ./admin_server
+      dockerfile: Dockerfile
+    container_name: taphoa_backend_admin
+    restart: always
+    ports:
+      - "${BACKEND_ADMIN_PORT}:8081"
+    env_file:
+      - ./admin_server/.env
+    depends_on:
+      - mongodb
+    volumes:
+      - ./admin_server:/app
+      - /app/node_modules
+    networks:
+      - taphoa_network
+
+  # Frontend Admin
+  frontend_admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    container_name: taphoa_frontend_admin
+    restart: always
+    ports:
+      - "${FRONTEND_ADMIN_PORT}:5174"
+    env_file:
+      - ./admin/.env
+    depends_on:
+      - backend_admin
+    volumes:
+      - ./admin:/app
       - /app/node_modules
     networks:
       - taphoa_network

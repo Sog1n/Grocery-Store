@@ -1,11 +1,11 @@
 # Client .dockerignore
 node_modules
 npm-debug.log
+.env.local
 .git
 .gitignore
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+README.md
+.vscode
 dist
-build
+coverage
+.DS_Store

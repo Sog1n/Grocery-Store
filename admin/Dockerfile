@@ -13,8 +13,8 @@ RUN npm install
 # Copy toàn bộ source code
 COPY . .
 
-# Mở port 5173 (Vite default port)
-EXPOSE 5173
+# Mở port 5174 (Vite default port)
+EXPOSE 5174
 
 # Chạy ứng dụng ở chế độ development với host 0.0.0.0
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

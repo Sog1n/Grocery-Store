@@ -13,8 +13,8 @@ RUN npm install
 # Copy toàn bộ source code
 COPY . .
 
-# Mở port 8080
-EXPOSE 8080
+# Mở port 8081
+EXPOSE 8081
 
 # Chạy ứng dụng
 CMD ["npm", "start"]
