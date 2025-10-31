@@ -57,10 +57,16 @@ productSchema.index({
     name  : "text",
     description : 'text'
 },{
-    name : 10,
-    description : 5
+    weights: {
+        name: 10,
+        description: 5
+    }
 })
 
+// Thêm index cho filter
+productSchema.index({ price: 1 })
+productSchema.index({ category: 1 })
+productSchema.index({ subCategory: 1 })
 
 const ProductModel = mongoose.model('product',productSchema)
 

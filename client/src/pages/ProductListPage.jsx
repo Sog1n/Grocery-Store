@@ -15,16 +15,13 @@ const ProductListPage = () => {
   const [totalPage, setTotalPage] = useState(1)
   const params = useParams()
   const AllSubCategory = useSelector(state => state.product.allSubCategory)
-  const [DisplaySubCatory, setDisplaySubCategory] = useState([])
-
-  console.log(AllSubCategory)
+  const [DisplaySubCategory, setDisplaySubCategory] = useState([])
 
   const subCategory = params?.subCategory?.split("-")
   const subCategoryName = subCategory?.slice(0, subCategory?.length - 1)?.join(" ")
 
   const categoryId = params.category.split("-").slice(-1)[0]
   const subCategoryId = params.subCategory.split("-").slice(-1)[0]
-
 
   const fetchProductdata = async () => {
     try {
@@ -35,17 +32,17 @@ const ProductListPage = () => {
           categoryId: categoryId,
           subCategoryId: subCategoryId,
           page: page,
-          limit: 8,
+          limit: 12,
         }
       })
 
       const { data: responseData } = response
 
       if (responseData.success) {
-        if (responseData.page == 1) {
+        if (responseData.page === 1) {
           setData(responseData.data)
         } else {
-          setData([...data, ...responseData.data])
+          setData((prevData) => [...prevData, ...responseData.data])
         }
         setTotalPage(responseData.totalCount)
       }
@@ -57,79 +54,136 @@ const ProductListPage = () => {
   }
 
   useEffect(() => {
-    fetchProductdata()
+    setPage(1)
+    setData([])
   }, [params])
 
+  useEffect(() => {
+    fetchProductdata()
+  }, [params, page])
 
   useEffect(() => {
     const sub = AllSubCategory.filter(s => {
       const filterData = s.category.some(el => {
-        return el._id == categoryId
+        return el._id === categoryId
       })
-
-      return filterData ? filterData : null
+      return filterData
     })
     setDisplaySubCategory(sub)
-  }, [params, AllSubCategory])
+  }, [params, AllSubCategory, categoryId])
+
+  const handleLoadMore = () => {
+    if (page < totalPage && !loading) {
+      setPage(prevPage => prevPage + 1)
+    }
+  }
 
   return (
-    <section className='sticky top-24 lg:top-20'>
-      <div className='container sticky top-24  mx-auto grid grid-cols-[90px,1fr]  md:grid-cols-[200px,1fr] lg:grid-cols-[280px,1fr]'>
-        {/**sub category **/}
-        <div className=' min-h-[88vh] max-h-[88vh] overflow-y-scroll  grid gap-1 shadow-md scrollbarCustom bg-white py-2'>
-          {
-            DisplaySubCatory.map((s, index) => {
-               const link = `/${valideURLConvert(s?.category[0]?.name)}-${s?.category[0]?._id}/${valideURLConvert(s.name)}-${s._id}`
-              return (
-                <Link to={link} className={`w-full p-2 lg:flex items-center lg:w-full lg:h-16 box-border lg:gap-4 border-b 
-                  hover:bg-green-100 cursor-pointer
-                  ${subCategoryId === s._id ? "bg-green-100" : ""}
-                `}
-                >
-                  <div className='w-fit max-w-28 mx-auto lg:mx-0 bg-white rounded  box-border' >
-                    <img
-                      src={s.image}
-                      alt='subCategory'
-                      className=' w-14 lg:h-14 lg:w-12 h-full object-scale-down'
-                    />
-                  </div>
-                  <p className='-mt-6 lg:mt-0 text-xs text-center lg:text-left lg:text-base'>{s.name}</p>
-                </Link>
-              )
-            })
-          }
-        </div>
+    <section className='bg-gray-50 min-h-screen py-4'>
+      <div className='container mx-auto px-4'>
+        <div className='grid grid-cols-1 lg:grid-cols-[240px,1fr] gap-4'>
+          
+          {/* Sidebar - Danh mục con */}
+          <aside className='bg-white rounded-lg shadow-sm border border-gray-200 h-fit lg:sticky lg:top-24'>
+            <div className='p-4 border-b border-gray-200'>
+              <h2 className='font-bold text-lg text-gray-800'>Danh mục</h2>
+            </div>
+            
+            <nav className='max-h-[calc(100vh-200px)] overflow-y-auto scrollbarCustom'>
+              {DisplaySubCategory.map((s, index) => {
+                const link = `/${valideURLConvert(s?.category[0]?.name)}-${s?.category[0]?._id}/${valideURLConvert(s.name)}-${s._id}`
+                const isActive = subCategoryId === s._id
+                
+                return (
+                  <Link 
+                    key={s._id || index}
+                    to={link} 
+                    className={`
+                      block px-4 py-3 border-b border-gray-100 transition-all duration-200
+                      hover:bg-green-50 hover:text-green-600 hover:border-l-4 hover:border-l-green-600
+                      ${isActive 
+                        ? 'bg-green-50 text-green-600 border-l-4 border-l-green-600 font-semibold' 
+                        : 'text-gray-700'
+                      }
+                    `}
+                  >
+                    <span className='text-sm lg:text-base'>{s.name}</span>
+                  </Link>
+                )
+              })}
+            </nav>
+          </aside>
 
+          {/* Khu vực sản phẩm */}
+          <main>
+            {/* Header */}
+            <div className='bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4'>
+              <h1 className='text-xl lg:text-2xl font-bold text-gray-800'>
+                {subCategoryName}
+              </h1>
+              <p className='text-sm text-gray-500 mt-1'>
+                {data.length > 0 && `Hiển thị ${data.length} sản phẩm`}
+              </p>
+            </div>
 
-        {/**Product **/}
-        <div className='sticky top-20'>
-          <div className='bg-white shadow-md p-4 z-10'>
-            <h3 className='font-semibold'>{subCategoryName}</h3>
-          </div>
-          <div>
-
-           <div className='min-h-[80vh] max-h-[80vh] overflow-y-auto relative'>
-            <div className=' grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 p-4 gap-4 '>
-                {
-                  data.map((p, index) => {
-                    return (
+            {/* Danh sách sản phẩm */}
+            <div className='bg-white rounded-lg shadow-sm border border-gray-200 p-4'>
+              {data.length === 0 && !loading ? (
+                <div className='text-center py-12'>
+                  <svg className='w-16 h-16 mx-auto text-gray-300 mb-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4' />
+                  </svg>
+                  <p className='text-gray-500 text-lg'>Không có sản phẩm nào</p>
+                </div>
+              ) : (
+                <>
+                  <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4'>
+                    {data.map((p, index) => (
                       <CardProduct
                         data={p}
                         key={p._id + "productSubCategory" + index}
                       />
-                    )
-                  })
-                }
-              </div>
-           </div>
+                    ))}
+                  </div>
 
-            {
-              loading && (
-                <Loading />
-              )
-            }
+                  {/* Load More Button */}
+                  {page < totalPage && (
+                    <div className='text-center mt-8'>
+                      <button
+                        onClick={handleLoadMore}
+                        disabled={loading}
+                        className='
+                          bg-green-600 hover:bg-green-700 text-white font-medium 
+                          px-8 py-3 rounded-lg transition-all duration-200
+                          disabled:bg-gray-400 disabled:cursor-not-allowed
+                          shadow-md hover:shadow-lg
+                        '
+                      >
+                        {loading ? 'Đang tải...' : 'Xem thêm sản phẩm'}
+                      </button>
+                    </div>
+                  )}
 
-          </div>
+                  {/* Thông báo hết sản phẩm */}
+                  {page >= totalPage && data.length > 0 && (
+                    <div className='text-center mt-8 py-4 border-t border-gray-200'>
+                      <p className='text-gray-500'>
+                        ✓ Đã hiển thị tất cả sản phẩm
+                      </p>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* Loading Overlay */}
+              {loading && page === 1 && (
+                <div className='absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center rounded-lg'>
+                  <Loading />
+                </div>
+              )}
+            </div>
+          </main>
+
         </div>
       </div>
     </section>

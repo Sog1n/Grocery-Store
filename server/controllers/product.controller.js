@@ -267,45 +267,84 @@ export const deleteProductDetails = async(request,response)=>{
 //search product
 export const searchProduct = async(request,response)=>{
     try {
-        let { search, page , limit } = request.body 
+        let { search, page, limit, categoryId, subCategoryId, minPrice, maxPrice, sortBy } = request.body 
 
         if(!page){
             page = 1
         }
         if(!limit){
-            limit  = 10
+            limit = 5 // Đổi thành 10 sản phẩm mỗi trang
         }
 
-        const query = search ? {
-            $text : {
-                $search : search
+        // Build query object
+        let query = {}
+        
+        // Text search
+        if(search) {
+            query.$text = {
+                $search: search
             }
-        } : {}
+        }
 
-        const skip = ( page - 1) * limit
+        // Filter by category
+        if(categoryId && categoryId.length > 0) {
+            query.category = { $in: categoryId }
+        }
 
-        const [data,dataCount] = await Promise.all([
-            ProductModel.find(query).sort({ createdAt  : -1 }).skip(skip).limit(limit).populate('category subCategory'),
+        // Filter by subcategory
+        if(subCategoryId && subCategoryId.length > 0) {
+            query.subCategory = { $in: subCategoryId }
+        }
+
+        // Filter by price range
+        if(minPrice !== undefined || maxPrice !== undefined) {
+            query.price = {}
+            if(minPrice !== undefined) {
+                query.price.$gte = Number(minPrice)
+            }
+            if(maxPrice !== undefined) {
+                query.price.$lte = Number(maxPrice)
+            }
+        }
+
+        // Sort options
+        let sortOptions = { createdAt: -1 } // Default sort
+        if(sortBy === 'price_asc') {
+            sortOptions = { price: 1 }
+        } else if(sortBy === 'price_desc') {
+            sortOptions = { price: -1 }
+        } else if(sortBy === 'name') {
+            sortOptions = { name: 1 }
+        }
+
+        const skip = (page - 1) * limit
+
+        const [data, dataCount] = await Promise.all([
+            ProductModel.find(query)
+                .sort(sortOptions)
+                .skip(skip)
+                .limit(limit)
+                .populate('category subCategory'),
             ProductModel.countDocuments(query)
         ])
 
         return response.json({
-            message : "Product data",
-            error : false,
-            success : true,
-            data : data,
-            totalCount :dataCount,
-            totalPage : Math.ceil(dataCount/limit),
-            page : page,
-            limit : limit 
+            message: "Product data",
+            error: false,
+            success: true,
+            data: data,
+            totalCount: dataCount,
+            totalPage: Math.ceil(dataCount/limit),
+            page: page,
+            limit: limit,
+            hasMore: page < Math.ceil(dataCount/limit)
         })
-
 
     } catch (error) {
         return response.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
+            message: error.message || error,
+            error: true,
+            success: false
         })
     }
 }
