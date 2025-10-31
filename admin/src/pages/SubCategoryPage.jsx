@@ -16,6 +16,7 @@ import toast from 'react-hot-toast'
 const SubCategoryPage = () => {
   const [openAddSubCategory,setOpenAddSubCategory] = useState(false)
   const [data,setData] = useState([])
+  const [categories,setCategories] = useState([]) // Thêm state này
   const [loading,setLoading] = useState(false)
   const columnHelper = createColumnHelper()
   const [ImageURL,setImageURL] = useState("")
@@ -28,6 +29,21 @@ const SubCategoryPage = () => {
   })
   const [openDeleteConfirmBox,setOpenDeleteConfirmBox] = useState(false)
 
+  // Thêm hàm fetch categories
+  const fetchCategory = async()=>{
+    try {
+        const response = await Axios({
+          ...SummaryApi.getCategory
+        })
+        const { data : responseData } = response
+
+        if(responseData.success){
+          setCategories(responseData.data)
+        }
+    } catch (error) {
+       AxiosToastError(error)
+    }
+  }
 
   const fetchSubCategory = async()=>{
     try {
@@ -48,6 +64,7 @@ const SubCategoryPage = () => {
   }
 
   useEffect(()=>{
+    fetchCategory() // Gọi thêm hàm này
     fetchSubCategory()
   },[])
 
@@ -130,21 +147,69 @@ const SubCategoryPage = () => {
       }
   }
   return (
-    <section className=''>
-        <div className='p-2   bg-white shadow-md flex items-center justify-between'>
-            <h2 className='font-semibold'>Sub Category</h2>
-            <button onClick={()=>setOpenAddSubCategory(true)} className='text-sm border border-primary-200 hover:bg-primary-200 px-3 py-1 rounded'>Add Sub Category</button>
-        </div>
+    <div className="container mx-auto p-4">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Sub Category</h1>
+        <button
+          onClick={() => setOpenAddSubCategory(true)}
+          className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold px-6 py-3 rounded-lg border-2 border-black shadow-md"
+        >
+          Add Sub Category
+        </button>
+      </div>
 
-        <div className='overflow-auto w-full max-w-[95vw]'>
-            <DisplayTable
-                data={data}
-                column={column}
-            />
-        </div>
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-black text-white">
+            <tr>
+              <th className="px-6 py-3 text-left">Sr.No</th>
+              <th className="px-6 py-3 text-left">Name</th>
+              <th className="px-6 py-3 text-left">Category</th>
+              <th className="px-6 py-3 text-left">Action</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {data.map((subCategory, index) => (
+              <tr key={subCategory._id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 text-gray-700">{index + 1}</td>
+                <td className="px-6 py-4 text-gray-700">{subCategory.name}</td>
+                <td className="px-6 py-4 text-gray-700">
+                  {subCategory.category && subCategory.category.length > 0
+                    ? subCategory.category.map(cat => {
+                        // cat ở đây đã là object có _id và name rồi
+                        return cat.name;
+                      }).filter(Boolean).join(', ')
+                    : 'N/A'}
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setOpenEdit(true)
+                        setEditData(subCategory)
+                      }}
+                      className="bg-green-100 hover:bg-green-200 text-green-700 p-2 rounded-full"
+                    >
+                      <HiPencil size={20}/>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setOpenDeleteConfirmBox(true)
+                        setDeleteSubCategory(subCategory)
+                      }}
+                      className="bg-red-100 hover:bg-red-200 text-red-700 p-2 rounded-full"
+                    >
+                      <MdDelete  size={20}/>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-
-        {
+      {
           openAddSubCategory && (
             <UploadSubCategoryModel 
               close={()=>setOpenAddSubCategory(false)}
@@ -176,7 +241,7 @@ const SubCategoryPage = () => {
             />
           )
         }
-    </section>
+    </div>
   )
 }
 
