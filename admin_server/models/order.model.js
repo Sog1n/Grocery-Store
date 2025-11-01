@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+
+
 const orderSchema = new mongoose.Schema({
     userId : {
         type : mongoose.Schema.ObjectId,
@@ -10,19 +12,15 @@ const orderSchema = new mongoose.Schema({
         required : [true, "Provide orderId"],
         unique : true
     },
-    productId : {
-        type : mongoose.Schema.ObjectId,
-        ref : "product"
-    },
-     items: [
-    {
-      productId: { type: mongoose.Schema.ObjectId, ref: "product" },
-      name: String,
-      image: Array,
-      quantity: Number,
-      price: Number,            // thêm giá nếu cần tính tiền từng sản phẩm
-      subTotal: Number          // quantity * price
-    }
+    items: [
+        {
+            productId: { type: mongoose.Schema.ObjectId, ref: "product" },
+            name: String,
+            image: Array,
+            quantity: Number,
+            price: Number,            // thêm giá nếu cần tính tiền từng sản phẩm
+            subTotal: Number          // quantity * price
+        }
     ],
     paymentId : {
         type : String,
@@ -43,6 +41,11 @@ const orderSchema = new mongoose.Schema({
     totalAmt : {
         type : Number,
         default : 0
+    },
+    order_status : {
+        type : String,
+            enum : ['pending', 'confirmed', 'shipping', 'delivered', 'cancelled'],
+        default : 'pending'
     },
     invoice_receipt : {
         type : String,

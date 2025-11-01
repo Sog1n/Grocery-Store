@@ -165,7 +165,8 @@ const SummaryApi = {
     adminGetAllOrders : {
         url : '/api/order/admin/list',
         method : 'get'
-    }
+    },
+
 }
 
 export default SummaryApi

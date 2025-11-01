@@ -260,3 +260,123 @@ export async function getAllOrdersAdminController(req, res) {
   }
 }
 
+export async function updateOrderStatusController(req, res) {
+    try {
+        const { orderId } = req.params;
+        const { order_status } = req.body;
+
+        const VALID = ['pending', 'confirmed', 'shipping', 'delivered', 'cancelled'];
+        if (!VALID.includes(order_status)) {
+            return res.status(400).json({
+                message: 'Invalid order_status value',
+                error: true,
+                success: false
+            });
+        }
+
+        // Support both Mongo _id and business orderId (e.g., ORD-...)
+        const filter = /^[0-9a-fA-F]{24}$/.test(orderId) ? { _id: orderId } : { orderId };
+
+        const order = await OrderModel.findOne(filter).populate('delivery_address');
+        if (!order) {
+            return res.status(404).json({
+                message: 'Order not found',
+                error: true,
+                success: false
+            });
+        }
+
+        // Enforce allowed transitions:
+        // PENDING -> CONFIRMED/CANCELLED
+        // CONFIRMED -> SHIPPING/CANCELLED
+        // SHIPPING -> DELIVERED/CANCELLED
+        // DELIVERED -> none
+        // CANCELLED -> none
+        const allowedNext = {
+            pending: ['confirmed', 'cancelled'],
+            confirmed: ['shipping', 'cancelled'],
+            shipping: ['delivered', 'cancelled'],
+            delivered: [],
+            cancelled: []
+        };
+
+        if (order.order_status === order_status) {
+            return res.json({
+                message: 'Order status unchanged',
+                data: order,
+                error: false,
+                success: true
+            });
+        }
+
+        const allowed = allowedNext[order.order_status] || [];
+        if (!allowed.includes(order_status)) {
+            return res.status(400).json({
+                message: `Invalid transition from ${order.order_status} to ${order_status}`,
+                error: true,
+                success: false
+            });
+        }
+
+        order.order_status = order_status;
+        await order.save();
+
+        return res.json({
+            message: 'Order status updated successfully',
+            data: order,
+            error: false,
+            success: true
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        });
+    }
+}
+
+export async function cancelOrderController(req, res) {
+    try {
+        const { orderId } = req.params;
+        const userId = req.userId; // from auth middleware
+
+        const filter = /^[0-9a-fA-F]{24}$/.test(orderId) ? { _id: orderId } : { orderId };
+        filter.userId = userId; // ensure user owns this order
+
+        const order = await OrderModel.findOne(filter);
+
+        if (!order) {
+            return res.status(404).json({
+                message: 'Order not found',
+                error: true,
+                success: false
+            });
+        }
+
+        if (order.order_status !== 'pending') {
+            return res.status(400).json({
+                message: 'Only pending orders can be cancelled',
+                error: true,
+                success: false
+            });
+        }
+
+        order.order_status = 'cancelled';
+        await order.save();
+
+        return res.json({
+            message: 'Order cancelled successfully',
+            data: order,
+            error: false,
+            success: true
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        });
+    }
+}
+

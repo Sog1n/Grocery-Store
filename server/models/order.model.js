@@ -42,6 +42,11 @@ const orderSchema = new mongoose.Schema({
         type : Number,
         default : 0
     },
+    order_status : {
+        type : String,
+        enum : ['pending', 'confirmed', 'shipping', 'delivered', 'cancelled'],
+        default : 'pending'
+    },
     invoice_receipt : {
         type : String,
         default : ""

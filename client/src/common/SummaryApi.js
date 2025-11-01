@@ -165,7 +165,12 @@ const SummaryApi = {
     adminGetAllOrders : {
         url : '/api/order/admin/list',
         method : 'get'
-    }
+    },
+    cancelOrder: {
+        url: '/api/order/:orderId/cancel',
+        method: 'patch'
+    },
+    
 }
 
 export default SummaryApi
