@@ -4,6 +4,10 @@ const productSchema = new mongoose.Schema({
     name : {
         type : String,
     },
+    name_no_accent: {
+        type: String,
+        default: ""
+    },
     image : {
         type : Array,
         default : []
@@ -52,15 +56,17 @@ const productSchema = new mongoose.Schema({
     timestamps : true
 })
 
-//create a text index
-productSchema.index({
-    name  : "text",
-    description : 'text'
-},{
-    name : 10,
-    description : 5
-})
+// Thêm indexes để tăng tốc độ tìm kiếm
+productSchema.index({ name: 1 })
+productSchema.index({ name_no_accent: 1 })
+productSchema.index({ price: 1 })
+productSchema.index({ category: 1 })
+productSchema.index({ subCategory: 1 })
+productSchema.index({ createdAt: -1 })
 
+// Compound index cho tìm kiếm + filter
+productSchema.index({ name: 1, category: 1, price: 1 })
+productSchema.index({ name_no_accent: 1, category: 1, price: 1 })
 
 const ProductModel = mongoose.model('product',productSchema)
 

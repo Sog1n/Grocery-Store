@@ -3,8 +3,9 @@ import ProductModel from "../models/product.model.js";
 export const createProductController = async(request,response)=>{
     try {
         const { 
-            name ,
-            image ,
+            name,
+            name_no_accent,
+            image,
             category,
             subCategory,
             unit,
@@ -24,8 +25,9 @@ export const createProductController = async(request,response)=>{
         }
 
         const product = new ProductModel({
-            name ,
-            image ,
+            name,
+            name_no_accent,
+            image,
             category,
             subCategory,
             unit,
@@ -267,45 +269,88 @@ export const deleteProductDetails = async(request,response)=>{
 //search product
 export const searchProduct = async(request,response)=>{
     try {
-        let { search, page , limit } = request.body 
+        let { search, page, limit, categoryId, subCategoryId, minPrice, maxPrice, sortBy } = request.body 
 
         if(!page){
             page = 1
         }
         if(!limit){
-            limit  = 10
+            limit = 8
         }
 
-        const query = search ? {
-            $text : {
-                $search : search
+        // Build query object
+        let query = {}
+        
+        // Text search with Regex - Tìm kiếm theo cả name và name_no_accent
+        if(search) {
+            const searchRegex = new RegExp(search, 'i') // 'i' = không phân biệt hoa thường
+            query.$or = [
+                { name: searchRegex },
+                { name_no_accent: searchRegex }
+            ]
+        }
+
+        // Filter by category
+        if(categoryId && categoryId.length > 0) {
+            query.category = { $in: categoryId }
+        }
+
+        // Filter by subcategory
+        if(subCategoryId && subCategoryId.length > 0) {
+            query.subCategory = { $in: subCategoryId }
+        }
+
+        // Filter by price range
+        if(minPrice !== undefined || maxPrice !== undefined) {
+            query.price = {}
+            if(minPrice !== undefined && minPrice !== '') {
+                query.price.$gte = Number(minPrice)
             }
-        } : {}
+            if(maxPrice !== undefined && maxPrice !== '') {
+                query.price.$lte = Number(maxPrice)
+            }
+        }
 
-        const skip = ( page - 1) * limit
+        // Sort options
+        let sortOptions = {}
+        if(sortBy === 'price_asc') {
+            sortOptions = { price: 1 }
+        } else if(sortBy === 'price_desc') {
+            sortOptions = { price: -1 }
+        } else if(sortBy === 'name') {
+            sortOptions = { name: 1 }
+        } else {
+            sortOptions = { createdAt: -1 } // Default: Mới nhất
+        }
 
-        const [data,dataCount] = await Promise.all([
-            ProductModel.find(query).sort({ createdAt  : -1 }).skip(skip).limit(limit).populate('category subCategory'),
+        const skip = (page - 1) * limit
+
+        // Execute query with Promise.all for better performance
+        const [data, dataCount] = await Promise.all([
+            ProductModel.find(query)
+                .sort(sortOptions)
+                .skip(skip)
+                .limit(limit)
+                .populate('category subCategory'),
             ProductModel.countDocuments(query)
         ])
 
         return response.json({
-            message : "Product data",
-            error : false,
-            success : true,
-            data : data,
-            totalCount :dataCount,
-            totalPage : Math.ceil(dataCount/limit),
-            page : page,
-            limit : limit 
+            message: "Product data",
+            error: false,
+            success: true,
+            data: data,
+            totalCount: dataCount,
+            totalPage: Math.ceil(dataCount/limit),
+            page: page,
+            limit: limit
         })
-
 
     } catch (error) {
         return response.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
+            message: error.message || error,
+            error: true,
+            success: false
         })
     }
 }

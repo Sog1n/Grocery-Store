@@ -1,10 +1,12 @@
 import ProductModel from "../models/product.model.js";
 
+// ❌ KHÔNG DÙNG CHO USER - Chỉ dùng cho Admin
 export const createProductController = async(request,response)=>{
     try {
         const { 
-            name ,
-            image ,
+            name,
+            name_no_accent,
+            image,
             category,
             subCategory,
             unit,
@@ -13,6 +15,7 @@ export const createProductController = async(request,response)=>{
             discount,
             description,
             more_details,
+            publish  // ← THÊM (nếu muốn tạo từ user side)
         } = request.body 
 
         if(!name || !image[0] || !category[0] || !subCategory[0] || !unit || !price || !description ){
@@ -24,8 +27,9 @@ export const createProductController = async(request,response)=>{
         }
 
         const product = new ProductModel({
-            name ,
-            image ,
+            name,
+            name_no_accent,
+            image,
             category,
             subCategory,
             unit,
@@ -34,6 +38,7 @@ export const createProductController = async(request,response)=>{
             discount,
             description,
             more_details,
+            publish: publish !== undefined ? publish : true
         })
         const saveProduct = await product.save()
 
@@ -53,9 +58,9 @@ export const createProductController = async(request,response)=>{
     }
 }
 
+// ✅ USER API - Chỉ lấy sản phẩm đang bán
 export const getProductController = async(request,response)=>{
     try {
-        
         let { page, limit, search } = request.body 
 
         if(!page){
@@ -66,11 +71,17 @@ export const getProductController = async(request,response)=>{
             limit = 10
         }
 
-        const query = search ? {
-            $text : {
+        // ← THÊM FILTER publish: true
+        const query = {
+            publish: true  // ← CHỈ LẤY SẢN PHẨM ĐANG BÁN
+        }
+
+        // Text search
+        if(search) {
+            query.$text = {
                 $search : search
             }
-        } : {}
+        }
 
         const skip = (page - 1) * limit
 
@@ -96,6 +107,7 @@ export const getProductController = async(request,response)=>{
     }
 }
 
+// ✅ USER API - Lấy sản phẩm theo category
 export const getProductByCategory = async(request,response)=>{
     try {
         const { id } = request.body 
@@ -108,8 +120,10 @@ export const getProductByCategory = async(request,response)=>{
             })
         }
 
+        // ← THÊM FILTER publish: true
         const product = await ProductModel.find({ 
-            category : { $in : id }
+            category : { $in : id },
+            publish: true  // ← CHỈ LẤY SẢN PHẨM ĐANG BÁN
         }).limit(15)
 
         return response.json({
@@ -127,6 +141,7 @@ export const getProductByCategory = async(request,response)=>{
     }
 }
 
+// ✅ USER API - Lấy sản phẩm theo category & subcategory
 export const getProductByCategoryAndSubCategory  = async(request,response)=>{
     try {
         const { categoryId,subCategoryId,page,limit } = request.body
@@ -147,9 +162,11 @@ export const getProductByCategoryAndSubCategory  = async(request,response)=>{
             limit = 10
         }
 
+        // ← THÊM FILTER publish: true
         const query = {
             category : { $in :categoryId  },
-            subCategory : { $in : subCategoryId }
+            subCategory : { $in : subCategoryId },
+            publish: true  // ← CHỈ LẤY SẢN PHẨM ĐANG BÁN
         }
 
         const skip = (page - 1) * limit
@@ -178,16 +195,28 @@ export const getProductByCategoryAndSubCategory  = async(request,response)=>{
     }
 }
 
+// ⚠️ SPECIAL CASE - Product Details
+// Không filter publish vì user có thể vào link trực tiếp
+// NHƯNG nên hiển thị warning nếu sản phẩm ngừng bán
 export const getProductDetails = async(request,response)=>{
     try {
         const { productId } = request.body 
 
         const product = await ProductModel.findOne({ _id : productId })
 
+        if(!product) {
+            return response.status(404).json({
+                message: "Product not found",
+                error: true,
+                success: false
+            })
+        }
 
+        // ← THÊM FLAG để frontend biết sản phẩm ngừng bán
         return response.json({
             message : "product details",
             data : product,
+            isDiscontinued: !product.publish,  // ← Flag này
             error : false,
             success : true
         })
@@ -201,7 +230,7 @@ export const getProductDetails = async(request,response)=>{
     }
 }
 
-//update product
+// ❌ KHÔNG DÙNG CHO USER - Chỉ dùng cho Admin
 export const updateProductDetails = async(request,response)=>{
     try {
         const { _id } = request.body 
@@ -234,7 +263,7 @@ export const updateProductDetails = async(request,response)=>{
     }
 }
 
-//delete product
+// ❌ KHÔNG DÙNG CHO USER - Chỉ dùng cho Admin
 export const deleteProductDetails = async(request,response)=>{
     try {
         const { _id } = request.body 
@@ -264,7 +293,7 @@ export const deleteProductDetails = async(request,response)=>{
     }
 }
 
-//search product
+// ✅ USER API - Search & Filter
 export const searchProduct = async(request,response)=>{
     try {
         let { search, page, limit, categoryId, subCategoryId, minPrice, maxPrice, sortBy } = request.body 
@@ -273,17 +302,21 @@ export const searchProduct = async(request,response)=>{
             page = 1
         }
         if(!limit){
-            limit = 5 // Đổi thành 10 sản phẩm mỗi trang
+            limit = 8
         }
 
-        // Build query object
-        let query = {}
+        // ← THÊM FILTER publish: true
+        let query = {
+            publish: true  // ← CHỈ LẤY SẢN PHẨM ĐANG BÁN
+        }
         
-        // Text search
+        // Text search with Regex
         if(search) {
-            query.$text = {
-                $search: search
-            }
+            const searchRegex = new RegExp(search, 'i')
+            query.$or = [
+                { name: searchRegex },
+                { name_no_accent: searchRegex }
+            ]
         }
 
         // Filter by category
@@ -299,22 +332,24 @@ export const searchProduct = async(request,response)=>{
         // Filter by price range
         if(minPrice !== undefined || maxPrice !== undefined) {
             query.price = {}
-            if(minPrice !== undefined) {
+            if(minPrice !== undefined && minPrice !== '') {
                 query.price.$gte = Number(minPrice)
             }
-            if(maxPrice !== undefined) {
+            if(maxPrice !== undefined && maxPrice !== '') {
                 query.price.$lte = Number(maxPrice)
             }
         }
 
         // Sort options
-        let sortOptions = { createdAt: -1 } // Default sort
+        let sortOptions = {}
         if(sortBy === 'price_asc') {
             sortOptions = { price: 1 }
         } else if(sortBy === 'price_desc') {
             sortOptions = { price: -1 }
         } else if(sortBy === 'name') {
             sortOptions = { name: 1 }
+        } else {
+            sortOptions = { createdAt: -1 }
         }
 
         const skip = (page - 1) * limit
@@ -336,8 +371,7 @@ export const searchProduct = async(request,response)=>{
             totalCount: dataCount,
             totalPage: Math.ceil(dataCount/limit),
             page: page,
-            limit: limit,
-            hasMore: page < Math.ceil(dataCount/limit)
+            limit: limit
         })
 
     } catch (error) {

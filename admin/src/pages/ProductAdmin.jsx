@@ -17,7 +17,7 @@ const ProductAdmin = () => {
     try {
       setLoading(true)
       const response = await Axios({
-        ...SummaryApi.getProduct,
+        ...SummaryApi.searchProduct,  // ← ĐỔI: Dùng searchProduct
         data: {
           page: page,
           limit: 12,
@@ -28,7 +28,7 @@ const ProductAdmin = () => {
       const { data: responseData } = response
 
       if (responseData.success) {
-        setTotalPageCount(responseData.totalNoPage)
+        setTotalPageCount(responseData.totalPage)  // ← ĐỔI: totalPage thay vì totalNoPage
         setProductData(responseData.data)
       }
 

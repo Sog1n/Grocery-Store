@@ -16,6 +16,7 @@ import { useEffect } from 'react';
 const UploadProduct = () => {
   const [data,setData] = useState({
       name : "",
+      name_no_accent : "",
       image : [],
       category : [],
       subCategory : [],
@@ -25,6 +26,7 @@ const UploadProduct = () => {
       discount : "",
       description : "",
       more_details : {},
+      publish : true  // ← THÊM DÒNG NÀY
   })
   const [imageLoading,setImageLoading] = useState(false)
   const [ViewImageURL,setViewImageURL] = useState("")
@@ -35,7 +37,6 @@ const UploadProduct = () => {
 
   const [openAddField,setOpenAddField] = useState(false)
   const [fieldName,setFieldName] = useState("")
-
 
   const handleChange = (e)=>{
     const { name, value} = e.target 
@@ -124,6 +125,7 @@ const UploadProduct = () => {
           successAlert(responseData.message)
           setData({
             name : "",
+            name_no_accent : "",
             image : [],
             category : [],
             subCategory : [],
@@ -133,14 +135,12 @@ const UploadProduct = () => {
             discount : "",
             description : "",
             more_details : {},
+            publish : true  // ← RESET VỀ TRUE
           })
-
       }
     } catch (error) {
         AxiosToastError(error)
     }
-
-
   }
 
   // useEffect(()=>{
@@ -148,11 +148,12 @@ const UploadProduct = () => {
   // },[])
   return (
     <section className=''>
-        <div className='p-2   bg-white shadow-md flex items-center justify-between'>
+        <div className='p-2 bg-white shadow-md flex items-center justify-between'>
             <h2 className='font-semibold'>Upload Product</h2>
         </div>
         <div className='grid p-3'>
             <form className='grid gap-4' onSubmit={handleSubmit}>
+                {/* Name */}
                 <div className='grid gap-1'>
                   <label htmlFor='name' className='font-medium'>Name</label>
                   <input 
@@ -166,6 +167,23 @@ const UploadProduct = () => {
                     className='bg-blue-50 p-2 outline-none border focus-within:border-primary-200 rounded'
                   />
                 </div>
+
+                {/* Name No Accent */}
+                <div className='grid gap-1'>
+                  <label htmlFor='name_no_accent' className='font-medium'>Name (No Accent)</label>
+                  <input 
+                    id='name_no_accent'
+                    type='text'
+                    placeholder='Enter product name without accent'
+                    name='name_no_accent'
+                    value={data.name_no_accent}
+                    onChange={handleChange}
+                    required
+                    className='bg-blue-50 p-2 outline-none border focus-within:border-primary-200 rounded'
+                  />
+                </div>
+
+                {/* Description */}
                 <div className='grid gap-1'>
                   <label htmlFor='description' className='font-medium'>Description</label>
                   <textarea 
@@ -181,6 +199,52 @@ const UploadProduct = () => {
                     className='bg-blue-50 p-2 outline-none border focus-within:border-primary-200 rounded resize-none'
                   />
                 </div>
+
+                {/* ← THÊM TRƯỜNG TRẠNG THÁI */}
+                <div className='grid gap-1'>
+                  <label className='font-medium'>Trạng thái sản phẩm</label>
+                  <div className='flex gap-4 bg-blue-50 p-4 rounded border'>
+                    <label className='flex items-center gap-2 cursor-pointer'>
+                      <input 
+                        type='radio'
+                        name='publish_radio'
+                        checked={data.publish === true}
+                        onChange={() => {
+                          setData((prev) => ({
+                            ...prev,
+                            publish: true
+                          }))
+                        }}
+                        className='w-4 h-4 cursor-pointer'
+                      />
+                      <span className='flex items-center gap-2'>
+                        <span className='w-3 h-3 bg-green-500 rounded-full'></span>
+                        <strong>Đang bán</strong>
+                      </span>
+                    </label>
+
+                    <label className='flex items-center gap-2 cursor-pointer'>
+                      <input 
+                        type='radio'
+                        name='publish_radio'
+                        checked={data.publish === false}
+                        onChange={() => {
+                          setData((prev) => ({
+                            ...prev,
+                            publish: false
+                          }))
+                        }}
+                        className='w-4 h-4 cursor-pointer'
+                      />
+                      <span className='flex items-center gap-2'>
+                        <span className='w-3 h-3 bg-gray-500 rounded-full'></span>
+                        <strong>Ngừng bán</strong>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Image */}
                 <div>
                     <p className='font-medium'>Image</p>
                     <div>
@@ -226,6 +290,8 @@ const UploadProduct = () => {
                     </div>
 
                 </div>
+
+                {/* Category */}
                 <div className='grid gap-1'>
                   <label className='font-medium'>Category</label>
                   <div>
@@ -270,6 +336,8 @@ const UploadProduct = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Sub Category */}
                 <div className='grid gap-1'>
                   <label className='font-medium'>Sub Category</label>
                   <div>
@@ -315,6 +383,7 @@ const UploadProduct = () => {
                   </div>
                 </div>
 
+                {/* Unit */}
                 <div className='grid gap-1'>
                   <label htmlFor='unit' className='font-medium'>Unit</label>
                   <input 
@@ -329,6 +398,7 @@ const UploadProduct = () => {
                   />
                 </div>
 
+                {/* Stock */}
                 <div className='grid gap-1'>
                   <label htmlFor='stock' className='font-medium'>Number of Stock</label>
                   <input 
@@ -343,6 +413,7 @@ const UploadProduct = () => {
                   />
                 </div>
 
+                {/* Price */}
                 <div className='grid gap-1'>
                   <label htmlFor='price' className='font-medium'>Price</label>
                   <input 
@@ -357,6 +428,7 @@ const UploadProduct = () => {
                   />
                 </div>
 
+                {/* Discount */}
                 <div className='grid gap-1'>
                   <label htmlFor='discount' className='font-medium'>Discount</label>
                   <input 
@@ -371,38 +443,37 @@ const UploadProduct = () => {
                   />
                 </div>
 
+                {/* More details fields */}
+                {
+                  Object?.keys(data?.more_details)?.map((k,index)=>{
+                      return(
+                        <div key={k} className='grid gap-1'>
+                          <label htmlFor={k} className='font-medium'>{k}</label>
+                          <input 
+                            id={k}
+                            type='text'
+                            value={data?.more_details[k]}
+                            onChange={(e)=>{
+                                const value = e.target.value 
+                                setData((preve)=>{
+                                  return{
+                                      ...preve,
+                                      more_details : {
+                                        ...preve.more_details,
+                                        [k] : value
+                                      }
+                                  }
+                                })
+                            }}
+                            required
+                            className='bg-blue-50 p-2 outline-none border focus-within:border-primary-200 rounded'
+                          />
+                        </div>
+                      )
+                  })
+                }
 
-                {/**add more field**/}
-                  {
-                    Object?.keys(data?.more_details)?.map((k,index)=>{
-                        return(
-                          <div className='grid gap-1'>
-                            <label htmlFor={k} className='font-medium'>{k}</label>
-                            <input 
-                              id={k}
-                              type='text'
-                              value={data?.more_details[k]}
-                              onChange={(e)=>{
-                                  const value = e.target.value 
-                                  setData((preve)=>{
-                                    return{
-                                        ...preve,
-                                        more_details : {
-                                          ...preve.more_details,
-                                          [k] : value
-                                        }
-                                    }
-                                  })
-                              }}
-                              required
-                              className='bg-blue-50 p-2 outline-none border focus-within:border-primary-200 rounded'
-                            />
-                          </div>
-                        )
-                    })
-                  }
-
-                <div onClick={()=>setOpenAddField(true)} className=' hover:bg-primary-200 bg-white py-1 px-3 w-32 text-center font-semibold border border-primary-200 hover:text-neutral-900 cursor-pointer rounded'>
+                <div onClick={()=>setOpenAddField(true)} className='hover:bg-primary-200 bg-white py-1 px-3 w-32 text-center font-semibold border border-primary-200 hover:text-neutral-900 cursor-pointer rounded'>
                   Add Fields
                 </div>
 

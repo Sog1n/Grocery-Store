@@ -13,10 +13,11 @@ import AxiosToastError from '../utils/AxiosToastError';
 import successAlert from '../utils/SuccessAlert';
 import { useEffect } from 'react';
 
-const EditProductAdmin = ({ close ,data : propsData,fetchProductData}) => {
+const EditProductAdmin = ({ close, data: propsData, fetchProductData }) => {
   const [data, setData] = useState({
-    _id : propsData._id,
+    _id: propsData._id,
     name: propsData.name,
+    name_no_accent: propsData.name_no_accent || "",  // ← THÊM
     image: propsData.image,
     category: propsData.category,
     subCategory: propsData.subCategory,
@@ -26,17 +27,17 @@ const EditProductAdmin = ({ close ,data : propsData,fetchProductData}) => {
     discount: propsData.discount,
     description: propsData.description,
     more_details: propsData.more_details || {},
+    publish: propsData.publish !== undefined ? propsData.publish : true  // ← THÊM
   })
+  
   const [imageLoading, setImageLoading] = useState(false)
   const [ViewImageURL, setViewImageURL] = useState("")
   const allCategory = useSelector(state => state.product.allCategory)
   const [selectCategory, setSelectCategory] = useState("")
   const [selectSubCategory, setSelectSubCategory] = useState("")
   const allSubCategory = useSelector(state => state.product.allSubCategory)
-
   const [openAddField, setOpenAddField] = useState(false)
   const [fieldName, setFieldName] = useState("")
-
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -123,43 +124,29 @@ const EditProductAdmin = ({ close ,data : propsData,fetchProductData}) => {
 
       if (responseData.success) {
         successAlert(responseData.message)
-        if(close){
+        if(close) {
           close()
         }
         fetchProductData()
-        setData({
-          name: "",
-          image: [],
-          category: [],
-          subCategory: [],
-          unit: "",
-          stock: "",
-          price: "",
-          discount: "",
-          description: "",
-          more_details: {},
-        })
-
       }
     } catch (error) {
       AxiosToastError(error)
     }
-
-
   }
 
   return (
     <section className='fixed top-0 right-0 left-0 bottom-0 bg-black z-50 bg-opacity-70 p-4'>
       <div className='bg-white w-full p-4 max-w-2xl mx-auto rounded overflow-y-auto h-full max-h-[95vh]'>
         <section className=''>
-          <div className='p-2   bg-white shadow-md flex items-center justify-between'>
-            <h2 className='font-semibold'>Upload Product</h2>
+          <div className='p-2 bg-white shadow-md flex items-center justify-between'>
+            <h2 className='font-semibold'>Edit Product</h2>
             <button onClick={close}>
               <IoClose size={20}/>
             </button>
           </div>
           <div className='grid p-3'>
             <form className='grid gap-4' onSubmit={handleSubmit}>
+              {/* Name */}
               <div className='grid gap-1'>
                 <label htmlFor='name' className='font-medium'>Name</label>
                 <input
@@ -173,6 +160,22 @@ const EditProductAdmin = ({ close ,data : propsData,fetchProductData}) => {
                   className='bg-blue-50 p-2 outline-none border focus-within:border-primary-200 rounded'
                 />
               </div>
+
+              {/* Name No Accent */}
+              <div className='grid gap-1'>
+                <label htmlFor='name_no_accent' className='font-medium'>Name (No Accent)</label>
+                <input
+                  id='name_no_accent'
+                  type='text'
+                  placeholder='Enter product name without accent'
+                  name='name_no_accent'
+                  value={data.name_no_accent}
+                  onChange={handleChange}
+                  className='bg-blue-50 p-2 outline-none border focus-within:border-primary-200 rounded'
+                />
+              </div>
+
+              {/* Description */}
               <div className='grid gap-1'>
                 <label htmlFor='description' className='font-medium'>Description</label>
                 <textarea
@@ -188,6 +191,55 @@ const EditProductAdmin = ({ close ,data : propsData,fetchProductData}) => {
                   className='bg-blue-50 p-2 outline-none border focus-within:border-primary-200 rounded resize-none'
                 />
               </div>
+
+              {/* ← THÊM TRƯỜNG TRẠNG THÁI */}
+              <div className='grid gap-1'>
+                <label className='font-medium'>Trạng thái sản phẩm</label>
+                <div className='flex gap-4 bg-blue-50 p-4 rounded border'>
+                  <label className='flex items-center gap-2 cursor-pointer'>
+                    <input 
+                      type='radio'
+                      name='publish_radio'
+                      checked={data.publish === true}
+                      onChange={() => {
+                        setData((prev) => ({
+                          ...prev,
+                          publish: true
+                        }))
+                      }}
+                      className='w-4 h-4 cursor-pointer'
+                    />
+                    <span className='flex items-center gap-2'>
+                      <span className='w-3 h-3 bg-green-500 rounded-full'></span>
+                      <strong>Đang bán</strong>
+                      <span className='text-xs text-gray-600'>(Hiển thị cho khách hàng)</span>
+                    </span>
+                  </label>
+
+                  <label className='flex items-center gap-2 cursor-pointer'>
+                    <input 
+                      type='radio'
+                      name='publish_radio'
+                      checked={data.publish === false}
+                      onChange={() => {
+                        setData((prev) => ({
+                          ...prev,
+                          publish: false
+                        }))
+                      }}
+                      className='w-4 h-4 cursor-pointer'
+                    />
+                    <span className='flex items-center gap-2'>
+                      <span className='w-3 h-3 bg-gray-500 rounded-full'></span>
+                      <strong>Ngừng bán</strong>
+                      <span className='text-xs text-gray-600'>(Ẩn khỏi khách hàng)</span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              {/* ...existing code: Image, Category, SubCategory, Unit, Stock, Price, Discount, More Details... */}
+
               <div>
                 <p className='font-medium'>Image</p>
                 <div>
@@ -378,12 +430,11 @@ const EditProductAdmin = ({ close ,data : propsData,fetchProductData}) => {
                 />
               </div>
 
-
-              {/**add more field**/}
+              {/* More details */}
               {
                 Object?.keys(data?.more_details)?.map((k, index) => {
                   return (
-                    <div className='grid gap-1'>
+                    <div key={k} className='grid gap-1'>
                       <label htmlFor={k} className='font-medium'>{k}</label>
                       <input
                         id={k}
@@ -409,7 +460,7 @@ const EditProductAdmin = ({ close ,data : propsData,fetchProductData}) => {
                 })
               }
 
-              <div onClick={() => setOpenAddField(true)} className=' hover:bg-primary-200 bg-white py-1 px-3 w-32 text-center font-semibold border border-primary-200 hover:text-neutral-900 cursor-pointer rounded'>
+              <div onClick={() => setOpenAddField(true)} className='hover:bg-primary-200 bg-white py-1 px-3 w-32 text-center font-semibold border border-primary-200 hover:text-neutral-900 cursor-pointer rounded'>
                 Add Fields
               </div>
 
