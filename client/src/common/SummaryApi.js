@@ -170,7 +170,20 @@ const SummaryApi = {
         url: '/api/order/:orderId/cancel',
         method: 'patch'
     },
-    
+    updateOrderStatus: {
+        url: '/api/order/orders/:orderId/status',
+        method: 'patch'
+    },
+
+
+    vnpayPayment: {
+        url: '/api/order/vnpay/create',
+        method: 'post'
+    },
+    vnpayReturn: {
+        url: '/api/order/vnpay/return',
+        method: 'get'
+    }
 }
 
 export default SummaryApi

@@ -181,6 +181,7 @@ const getOrderProductItems = async({
                 delivery_address : addressId,
                 subTotalAmt  : Number(item.amount_total / 100),
                 totalAmt  :  Number(item.amount_total / 100),
+
             }
 
             productList.push(paylod)
@@ -209,8 +210,7 @@ export async function webhookStripe(request,response){
             userId : userId,
             addressId : session.metadata.addressId,
             paymentId  : session.payment_intent,
-            payment_status : session.payment_status,
-            order_status: 'pending'
+            payment_status : session.payment_status
         })
     
       const order = await OrderModel.insertMany(orderProduct)
