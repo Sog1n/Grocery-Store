@@ -5,6 +5,7 @@ import AxiosToastError from '../utils/AxiosToastError'
 import Loading from '../components/Loading'
 import toast from 'react-hot-toast'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
+import { FaExclamationTriangle, FaBoxOpen } from 'react-icons/fa'
 
 const OrderAdmin = () => {
   const [orders, setOrders] = useState([])
@@ -84,61 +85,83 @@ const OrderAdmin = () => {
     }
   }
 
-  const handleStatusChange = async (orderId, newStatus) => {
-    try {
-      setUpdating(orderId)
-      const response = await Axios({
-        ...SummaryApi.updateOrderStatus,
-        url: SummaryApi.updateOrderStatus.url.replace(':orderId', orderId),
-        data: { order_status: newStatus }
-      })
-
-      if (response.data.success) {
-        toast.success('Order status updated successfully')
-        fetchOrders()
-      }
-    } catch (error) {
-      AxiosToastError(error)
-    } finally {
-      setUpdating(null)
-    }
-  }
-
   const handleCancelOrder = async (orderId) => {
-    if (!confirm('Are you sure you want to cancel this order?')) {
-      return
+    if (!confirm('Bạn có chắc muốn hủy đơn hàng này?')) {
+        return;
     }
 
     try {
-      setUpdating(orderId)
-      const response = await Axios({
-        ...SummaryApi.updateOrderStatus,
-        url: SummaryApi.updateOrderStatus.url.replace(':orderId', orderId),
-        data: { order_status: 'cancelled' }
-      })
+        setUpdating(orderId);
+        
+        const response = await Axios({
+            url: `/api/order/orders/${orderId}/status`,
+            method: 'PATCH',
+            data: { order_status: 'cancelled' }
+        });
 
-      if (response.data.success) {
-        toast.success('Order cancelled successfully')
-        fetchOrders()
-      }
+        if (response.data.success) {
+            toast.success('Đơn hàng đã được hủy thành công');
+            
+            fetchOrders();
+        }
     } catch (error) {
-      AxiosToastError(error)
+        AxiosToastError(error);
     } finally {
-      setUpdating(null)
+        setUpdating(null);
     }
-  }
+};
+
+const handleStatusChange = async (orderId, newStatus) => {
+    try {
+        setUpdating(orderId);
+        
+        const response = await Axios({
+            url: `/api/order/orders/${orderId}/status`,
+            method: 'PATCH',
+            data: { order_status: newStatus }
+        });
+
+        if (response.data.success) {
+            toast.success('Cập nhật trạng thái đơn hàng thành công');
+            
+            fetchOrders();
+        }
+    } catch (error) {
+        AxiosToastError(error);
+    } finally {
+        setUpdating(null);
+    }
+};
 
   useEffect(() => {
     fetchOrders()
   }, [])
+
+  // ← THÊM: KIỂM TRA PRODUCT CÓ VẤN ĐỀ
+  const hasProductIssue = (product) => {
+    return !product?.publish || product?.stock <= 0
+  }
 
   const renderOrderCard = (order, index) => {
     const progressAction = getProgressAction(order.order_status)
     const isUpdating = updating === order._id
     const isFinished = order.order_status === 'delivered' || order.order_status === 'cancelled'
 
+    // ← KIỂM TRA CÓ SẢN PHẨM CÓ VẤN ĐỀ KHÔNG
+    const hasIssues = order.items?.some(item => hasProductIssue(item.productId))
+
     return (
       <div key={order._id + index} className='p-3 bg-white rounded border'>
+        {/* ← THÊM WARNING BANNER */}
+        {hasIssues && order.order_status !== 'cancelled' && (
+          <div className='bg-orange-100 border border-orange-400 text-orange-800 px-3 py-2 rounded mb-3 text-xs'>
+            <div className='flex items-center gap-2'>
+              <FaExclamationTriangle />
+              <strong>Đơn hàng có sản phẩm ngừng bán hoặc hết hàng!</strong>
+            </div>
+          </div>
+        )}
+
         <div className="flex justify-between items-start mb-3">
           <div>
             <p className='text-sm font-semibold'>Order No: {order.orderId}</p>
@@ -169,6 +192,7 @@ const OrderAdmin = () => {
                   onClick={() => handleCancelOrder(order._id)}
                   disabled={isUpdating}
                   className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Cancel order and restore stock"
                 >
                   Cancel
                 </button>
@@ -179,21 +203,59 @@ const OrderAdmin = () => {
 
         <p className='font-semibold mb-2'>Items:</p>
         <div className="flex flex-col gap-2">
-          {order.items?.map((item, i) => (
-            <div key={i} className="flex items-center gap-3 border-b pb-2">
-              <img
-                src={item.image?.[0]}
-                alt={item.name}
-                className="w-14 h-14 object-cover rounded"
-              />
-              <div className="flex-1">
-                <p className="font-medium">{item.name}</p>
-                <p>Quantity: {item.quantity}</p>
-                <p>Price: {item.price.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</p>
+          {order.items?.map((item, i) => {
+            const product = item.productId
+            const itemHasIssue = hasProductIssue(product)
+
+            return (
+              <div 
+                key={i} 
+                className={`flex items-center gap-3 border-b pb-2 ${
+                  itemHasIssue ? 'opacity-60 bg-red-50' : ''
+                }`}
+              >
+                <img
+                  src={item.image?.[0]}
+                  alt={item.name}
+                  className={`w-14 h-14 object-cover rounded ${
+                    itemHasIssue ? 'grayscale' : ''
+                  }`}
+                />
+                <div className="flex-1">
+                  <p className={`font-medium ${itemHasIssue ? 'line-through' : ''}`}>
+                    {item.name}
+                  </p>
+                  
+                  {/* ← HIỂN THỊ STOCK & PUBLISH STATUS */}
+                  {product && (
+                    <div className='flex gap-2 mt-1'>
+                      {!product.publish && (
+                        <span className='text-[10px] bg-orange-200 text-orange-800 px-2 py-0.5 rounded flex items-center gap-1'>
+                          <FaExclamationTriangle size={8} />
+                          Ngừng bán
+                        </span>
+                      )}
+                      {product.stock <= 0 && (
+                        <span className='text-[10px] bg-red-200 text-red-800 px-2 py-0.5 rounded flex items-center gap-1'>
+                          <FaBoxOpen size={8} />
+                          Hết hàng
+                        </span>
+                      )}
+                      {product.stock > 0 && (
+                        <span className='text-[10px] bg-green-200 text-green-800 px-2 py-0.5 rounded'>
+                          Stock: {product.stock}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  <p>Quantity: {item.quantity}</p>
+                  <p>Price: {item.price.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</p>
+                </div>
+                <p className="font-semibold">Subtotal: {item.subTotal.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</p>
               </div>
-              <p className="font-semibold">Subtotal: {item.subTotal.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</p>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         <div className="text-right font-semibold mt-3">

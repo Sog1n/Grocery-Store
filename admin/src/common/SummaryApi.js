@@ -160,13 +160,19 @@ const SummaryApi = {
     getOrderItems : {
         url : '/api/order/order-list',
         method : 'get'
-    }
-    ,
+    },
     adminGetAllOrders : {
         url : '/api/order/admin/list',
         method : 'get'
     },
-
+    updateOrderStatus: {
+        url: '/api/order/orders/:orderId/status',
+        method: 'PATCH'
+    },
+    cancelOrder: {
+        url: '/api/order/:orderId/cancel',
+        method: 'PATCH'
+    }
 }
 
 export default SummaryApi

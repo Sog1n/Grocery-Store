@@ -133,6 +133,10 @@ const SummaryApi = {
         url : '/api/cart/delete-cart-item',
         method : 'delete'
     },
+    validateCartCheckout : {
+        url : '/api/cart/validate-checkout',
+        method : 'post'
+    },
     createAddress : {
         url : '/api/address/create',
         method : 'post'
