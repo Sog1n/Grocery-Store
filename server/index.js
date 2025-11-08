@@ -48,15 +48,22 @@ app.use("/api/cart",cartRouter)
 app.use("/api/address",addressRouter)
 app.use('/api/order',orderRouter)
 app.use('/api/admin',adminRouter)
-connectDB().then(async()=>{
-    // Tạo admin và user mặc định
-    // await seedUsers()
-    
-    // Tạo dữ liệu sản phẩm mẫu
-    // await seedProducts()
-    
-    app.listen(PORT,()=>{
-        console.log("Server is running",PORT)
+
+// Export app cho testing (KHÔNG connect DB, KHÔNG start server)
+export default app
+
+// Chỉ chạy server khi file này được chạy trực tiếp (không phải import)
+if (process.env.NODE_ENV !== 'test') {
+    connectDB().then(async()=>{
+        // Tạo admin và user mặc định
+        // await seedUsers()
+        
+        // Tạo dữ liệu sản phẩm mẫu
+        // await seedProducts()
+        
+        app.listen(PORT,()=>{
+            console.log("Server is running",PORT)
+        })
     })
-})
+}
 
