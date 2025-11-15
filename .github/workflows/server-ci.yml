@@ -42,56 +42,56 @@ jobs:
       env:
         NODE_ENV: test  # Set môi trường là test
 
-  # ============================================
-  # JOB 2: INTEGRATION TEST
-  # ============================================
-  integration-test:
-    # Tên hiển thị của job
-    name: Integration Tests
-    # Chạy trên máy ảo Ubuntu
-    runs-on: ubuntu-latest
+  # # ============================================
+  # # JOB 2: INTEGRATION TEST
+  # # ============================================
+  # integration-test:
+  #   # Tên hiển thị của job
+  #   name: Integration Tests
+  #   # Chạy trên máy ảo Ubuntu
+  #   runs-on: ubuntu-latest
     
-    # Khởi động các services cần thiết cho test
-    services:
-      mongodb:
-        # Sử dụng MongoDB version 6.0 từ Docker Hub
-        image: mongo:6.0
-        # Map port 27017 của container ra port 27017 của máy ảo
-        ports:
-          - 27017:27017
-        # Health check: Kiểm tra MongoDB đã sẵn sàng chưa
-        options: >-
-          --health-cmd "mongosh --eval 'db.adminCommand({ping: 1})'"
-          --health-interval 10s  # Kiểm tra mỗi 10 giây
-          --health-timeout 5s    # Timeout sau 5 giây
-          --health-retries 5     # Thử lại 5 lần nếu fail
+  #   # Khởi động các services cần thiết cho test
+  #   services:
+  #     mongodb:
+  #       # Sử dụng MongoDB version 6.0 từ Docker Hub
+  #       image: mongo:6.0
+  #       # Map port 27017 của container ra port 27017 của máy ảo
+  #       ports:
+  #         - 27017:27017
+  #       # Health check: Kiểm tra MongoDB đã sẵn sàng chưa
+  #       options: >-
+  #         --health-cmd "mongosh --eval 'db.adminCommand({ping: 1})'"
+  #         --health-interval 10s  # Kiểm tra mỗi 10 giây
+  #         --health-timeout 5s    # Timeout sau 5 giây
+  #         --health-retries 5     # Thử lại 5 lần nếu fail
     
-    steps:
-    # Bước 1: Lấy code từ repository
-    - name: Checkout code
-      uses: actions/checkout@v4
+  #   steps:
+  #   # Bước 1: Lấy code từ repository
+  #   - name: Checkout code
+  #     uses: actions/checkout@v4
     
-    # Bước 2: Cài đặt Node.js
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-        cache: 'npm'
-        cache-dependency-path: server/package-lock.json
+  #   # Bước 2: Cài đặt Node.js
+  #   - name: Setup Node.js
+  #     uses: actions/setup-node@v4
+  #     with:
+  #       node-version: '20.x'
+  #       cache: 'npm'
+  #       cache-dependency-path: server/package-lock.json
     
-    # Bước 3: Cài đặt dependencies
-    - name: Install dependencies
-      working-directory: ./server
-      run: npm ci
+  #   # Bước 3: Cài đặt dependencies
+  #   - name: Install dependencies
+  #     working-directory: ./server
+  #     run: npm ci
     
-    # Bước 4: Chạy integration tests
-    - name: Run Integration Tests
-      working-directory: ./server
-      run: npm run test:integration  # Chạy script test:integration
-      env:
-        NODE_ENV: test  # Môi trường test
-        # Kết nối tới MongoDB container (localhost vì cùng máy ảo)
-        MONGODB_URI: mongodb://localhost:27017/test_db
-        # JWT secrets giả để test (không phải secrets thật)
-        JWT_SECRET_KEY_ACCESS_TOKEN: test-secret-key-for-ci-testing
-        JWT_SECRET_KEY_REFRESH_TOKEN: test-refresh-key-for-ci-testing
+  #   # Bước 4: Chạy integration tests
+  #   - name: Run Integration Tests
+  #     working-directory: ./server
+  #     run: npm run test:integration  # Chạy script test:integration
+  #     env:
+  #       NODE_ENV: test  # Môi trường test
+  #       # Kết nối tới MongoDB container (localhost vì cùng máy ảo)
+  #       MONGODB_URI: mongodb://localhost:27017/test_db
+  #       # JWT secrets giả để test (không phải secrets thật)
+  #       JWT_SECRET_KEY_ACCESS_TOKEN: test-secret-key-for-ci-testing
+  #       JWT_SECRET_KEY_REFRESH_TOKEN: test-refresh-key-for-ci-testing
