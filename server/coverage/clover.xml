@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1762940947815" clover="3.2.0">
-  <project timestamp="1762940947815" name="All files">
-    <metrics statements="699" coveredstatements="70" conditionals="371" coveredconditionals="12" methods="69" coveredmethods="5" elements="1139" coveredelements="87" complexity="0" loc="699" ncloc="699" packages="2" files="18" classes="18"/>
+<coverage generated="1763221481483" clover="3.2.0">
+  <project timestamp="1763221481484" name="All files">
+    <metrics statements="699" coveredstatements="75" conditionals="371" coveredconditionals="12" methods="69" coveredmethods="6" elements="1139" coveredelements="93" complexity="0" loc="699" ncloc="699" packages="2" files="18" classes="18"/>
     <package name="controllers">
-      <metrics statements="679" coveredstatements="57" conditionals="369" coveredconditionals="12" methods="61" coveredmethods="2"/>
+      <metrics statements="679" coveredstatements="62" conditionals="369" coveredconditionals="12" methods="61" coveredmethods="3"/>
       <file name="address.controller.js" path="D:\taphoa_test\server\controllers\address.controller.js">
         <metrics statements="29" coveredstatements="4" conditionals="8" coveredconditionals="0" methods="4" coveredmethods="0"/>
         <line num="4" count="1" type="stmt"/>
@@ -519,7 +519,7 @@
         <line num="16" count="0" type="stmt"/>
       </file>
       <file name="user.controller.js" path="D:\taphoa_test\server\controllers\user.controller.js">
-        <metrics statements="128" coveredstatements="29" conditionals="76" coveredconditionals="12" methods="11" coveredmethods="2"/>
+        <metrics statements="128" coveredstatements="34" conditionals="76" coveredconditionals="12" methods="11" coveredmethods="3"/>
         <line num="13" count="4" type="stmt"/>
         <line num="14" count="4" type="stmt"/>
         <line num="16" count="4" type="cond" truecount="4" falsecount="1"/>
@@ -642,11 +642,11 @@
         <line num="477" count="0" type="stmt"/>
         <line num="479" count="0" type="stmt"/>
         <line num="490" count="0" type="stmt"/>
-        <line num="500" count="0" type="stmt"/>
-        <line num="501" count="0" type="stmt"/>
-        <line num="503" count="0" type="stmt"/>
-        <line num="505" count="0" type="stmt"/>
-        <line num="507" count="0" type="stmt"/>
+        <line num="500" count="1" type="stmt"/>
+        <line num="501" count="1" type="stmt"/>
+        <line num="503" count="1" type="stmt"/>
+        <line num="505" count="1" type="stmt"/>
+        <line num="507" count="1" type="stmt"/>
         <line num="514" count="0" type="stmt"/>
       </file>
       <file name="vnpay.controller.js" path="D:\taphoa_test\server\controllers\vnpay.controller.js">

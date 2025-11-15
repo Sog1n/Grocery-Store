@@ -186,9 +186,10 @@ describe('User Integration Tests', () => {
         .expect(200);
       
       expect(loginRes.body.success).toBe(true);
-      expect(loginRes.body.data).toHaveProperty('token');
+      expect(loginRes.body.data).toHaveProperty('accesstoken');
+      expect(loginRes.body.data).toHaveProperty('refreshToken');
       
-      const token = loginRes.body.data.token;
+      const token = loginRes.body.data.accesstoken;
       
       // ─────────────────────────────────────────────────
       // STEP 3: Get User Details (with auth)
