@@ -12,8 +12,7 @@
 - [Chạy Ứng Dụng](#chạy-ứng-dụng)
 - [API Endpoints](#api-endpoints)
 - [Tài Khoản Mặc Định](#tài-khoản-mặc-định)
-- [Screenshots](#screenshots)
-- [Đóng Góp](#đóng-góp)
+
 
 ## Giới Thiệu
 
