@@ -12,6 +12,9 @@ const Home = () => {
   const subCategoryData = useSelector(state => state.product.allSubCategory)
   const navigate = useNavigate()
 
+  // SocketManager đã xử lý socket events và update Redux
+  // Component này chỉ cần đọc từ Redux store
+
   const handleRedirectProductListpage = (id,cat)=>{
       console.log(id,cat)
       const subcategory = subCategoryData.find(sub =>{

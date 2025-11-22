@@ -14,6 +14,7 @@ import { handleAddItemCart } from './store/cartProduct'
 import GlobalProvider from './provider/GlobalProvider';
 import { FaCartShopping } from "react-icons/fa6";
 import CartMobileLink from './components/CartMobile';
+import SocketManager from './socket/SocketManager';
 
 function App() {
   const dispatch = useDispatch()
@@ -80,6 +81,7 @@ function App() {
 
   return (
     <GlobalProvider>
+      <SocketManager />
       {!hideLayout && <Header />}
       <main className='min-h-[78vh]'>
         <Outlet />

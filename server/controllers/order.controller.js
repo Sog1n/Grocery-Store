@@ -4,6 +4,7 @@ import OrderModel from "../models/order.model.js";
 import UserModel from "../models/user.model.js";
 import ProductModel from "../models/product.model.js";
 import mongoose from "mongoose";
+import { getIO } from "../socket/index.js";
 
 // ═══════════════════════════════════════════════════════════
 // HELPER FUNCTIONS - QUẢN LÝ TỒN KHO
@@ -204,6 +205,14 @@ export async function CashOnDeliveryOrderController(request, response) {
 
         console.log('✅ COD Order created:', generatedOrder.orderId);
 
+        try {
+            const io = getIO()
+            const eventData = { id: generatedOrder._id, orderId: generatedOrder.orderId, userId: generatedOrder.userId, status: generatedOrder.order_status }
+            io.to('admin:all').emit('order:created', eventData)
+            io.to(`user:${generatedOrder.userId}`).emit('order:created', eventData)
+            io.to('user:all').emit('order:created', eventData)
+        } catch (e) {}
+
         return response.json({
             message: 'Order created successfully',
             success: true,
@@ -389,6 +398,17 @@ export async function webhookStripe(request, response) {
             const order = await OrderModel.insertMany(orderProducts);
 
             console.log('✅ Stripe order created');
+
+            try {
+                const io = getIO()
+                // emit order created for each created order
+                for (const o of order) {
+                    const eventData = { id: o._id, orderId: o.orderId, userId: o.userId, status: o.order_status }
+                    io.to('admin:all').emit('order:created', eventData)
+                    io.to(`user:${o.userId}`).emit('order:created', eventData)
+                    io.to('user:all').emit('order:created', eventData)
+                }
+            } catch (e) {}
             
             if (Boolean(order[0])) {
                 await UserModel.findByIdAndUpdate(userId, {
@@ -466,6 +486,19 @@ export async function cancelOrderController(request, response) {
 
         order.order_status = 'cancelled';
         await order.save();
+
+        try {
+            const io = getIO()
+            const eventData = { id: order._id, orderId: order.orderId, userId: userId, status: order.order_status }
+            
+            // Emit to all 3 rooms for complete coverage
+            io.to('admin:all').emit('order:cancelled', eventData)
+            io.to('user:all').emit('order:cancelled', eventData)
+            io.to(`user:${userId}`).emit('order:cancelled', eventData)
+            io.to(`user:${userId}`).emit('order:status_changed', eventData)
+        } catch (e) {
+            console.error('[Order Controller] Failed to emit order:cancelled:', e)
+        }
 
         console.log('✅ User cancelled order:', order.orderId);
 
@@ -584,6 +617,22 @@ export async function updateOrderStatusController(req, res) {
             order.order_status = order_status;
             await order.save();
 
+            // Emit realtime event
+            try {
+                const io = getIO()
+                const eventData = { id: order._id, orderId: order.orderId, status: order_status, userId: order.userId }
+                
+                // Emit to all 3 rooms for complete coverage
+                io.to('admin:all').emit('order:cancelled', eventData)
+                io.to('user:all').emit('order:cancelled', eventData)
+                io.to(`user:${order.userId}`).emit('order:cancelled', eventData)
+                io.to('admin:all').emit('order:status_changed', eventData)
+                io.to('user:all').emit('order:status_changed', eventData)
+                io.to(`user:${order.userId}`).emit('order:status_changed', eventData)
+            } catch (e) {
+                console.error('[Order Controller] Failed to emit order cancellation:', e)
+            }
+
             return res.json({
                 message: 'Order cancelled and stock restored',
                 data: order,
@@ -596,6 +645,19 @@ export async function updateOrderStatusController(req, res) {
 
         order.order_status = order_status;
         await order.save();
+
+        // Emit realtime event for status change
+        try {
+            const io = getIO()
+            const eventData = { id: order._id, orderId: order.orderId, status: order_status, userId: order.userId }
+            
+            // Emit to all 3 rooms for complete coverage
+            io.to('admin:all').emit('order:status_changed', eventData)
+            io.to('user:all').emit('order:status_changed', eventData)
+            io.to(`user:${order.userId}`).emit('order:status_changed', eventData)
+        } catch (e) {
+            console.error('[Order Controller] Failed to emit order:status_changed:', e)
+        }
 
         return res.json({
             message: 'Order status updated',

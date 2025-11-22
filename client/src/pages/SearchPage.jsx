@@ -34,6 +34,7 @@ const SearchPage = () => {
   
   const allCategory = useSelector(state => state.product.allCategory)
   const allSubCategory = useSelector(state => state.product.allSubCategory)
+  const reduxProducts = useSelector(state => state.product.product) // Listen to Redux products updated by SocketManager
   
   const loadingArrayCard = new Array(8).fill(null)
 
@@ -73,6 +74,14 @@ const SearchPage = () => {
     setPage(1)
     fetchData(1)
   }, [searchText, selectedCategories, selectedSubCategories, minPrice, maxPrice, sortBy])
+
+  // Realtime: Refetch search results when Redux products change (updated by SocketManager)
+  useEffect(() => {
+    if (reduxProducts.length > 0) {
+      console.log('[SearchPage] Redux products changed, refetching search results...')
+      fetchData(page)
+    }
+  }, [reduxProducts])
 
   const handleCategoryChange = (categoryId) => {
     setSelectedCategories(prev => {

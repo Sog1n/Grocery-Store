@@ -6,6 +6,8 @@ import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import connectDB from './config/connectDB.js'
+import { createServer } from 'http'
+import { initSocket } from './socket/index.js'
 import userRouter from './route/user.route.js'
 import categoryRouter from './route/category.route.js'
 import uploadRouter from './route/upload.router.js'
@@ -60,9 +62,13 @@ if (process.env.NODE_ENV !== 'test') {
         
         // Tạo dữ liệu sản phẩm mẫu
         // await seedProducts()
-        
-        app.listen(PORT,()=>{
-            console.log("Server is running",PORT)
+
+        // Create HTTP server and attach socket
+        const server = createServer(app)
+        await initSocket(server)
+
+        server.listen(PORT, ()=>{
+            console.log('Server is running', PORT)
         })
     })
 }

@@ -14,6 +14,7 @@ const CategoryWiseProductDisplay = ({ id, name }) => {
     const [loading, setLoading] = useState(false)
     const containerRef = useRef()
     const subCategoryData = useSelector(state => state.product.allSubCategory)
+    const reduxProducts = useSelector(state => state.product.product) // Listen to Redux products
     const loadingCardNumber = new Array(6).fill(null)
 
     const fetchCategoryWiseProduct = async () => {
@@ -41,6 +42,14 @@ const CategoryWiseProductDisplay = ({ id, name }) => {
     useEffect(() => {
         fetchCategoryWiseProduct()
     }, [])
+
+    // Realtime: Refetch when Redux products change (triggered by socket events)
+    useEffect(() => {
+        if (reduxProducts.length > 0) {
+            console.log('[CategoryWiseProductDisplay] Redux products changed, refetching for category:', name)
+            fetchCategoryWiseProduct()
+        }
+    }, [reduxProducts])
 
     const handleScrollRight = () => {
         containerRef.current.scrollLeft += 200

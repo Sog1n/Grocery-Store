@@ -29,6 +29,7 @@ services:
       - ./server/.env
     depends_on:
       - mongodb
+      - redis
     volumes:
       - ./server:/app
       - /app/node_modules
@@ -67,6 +68,7 @@ services:
       - ./admin_server/.env
     depends_on:
       - mongodb
+      - redis
     volumes:
       - ./admin_server:/app
       - /app/node_modules
@@ -89,6 +91,16 @@ services:
     volumes:
       - ./admin:/app
       - /app/node_modules
+    networks:
+      - taphoa_network
+
+  # Redis for Socket.IO adapter
+  redis:
+    image: redis:7-alpine
+    container_name: taphoa_redis
+    restart: always
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
     networks:
       - taphoa_network
 

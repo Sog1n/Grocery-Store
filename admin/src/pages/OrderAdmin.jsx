@@ -6,11 +6,14 @@ import Loading from '../components/Loading'
 import toast from 'react-hot-toast'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
 import { FaExclamationTriangle, FaBoxOpen } from 'react-icons/fa'
+import { useSelector } from 'react-redux'
+import { useSocket } from '../socket/useSocket'
 
 const OrderAdmin = () => {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(false)
   const [updating, setUpdating] = useState(null)
+  const [recentlyUpdated, setRecentlyUpdated] = useState(null)
   const [expandedSections, setExpandedSections] = useState({
     pending: true,
     confirmed: true,
@@ -18,6 +21,10 @@ const OrderAdmin = () => {
     delivered: false,
     cancelled: false
   })
+
+  // Realtime: connect socket to update orders when user creates/cancels or admin updates
+  const adminToken = useSelector(s => s.user?.accessToken)
+  const socketRef = useSocket(adminToken)
 
   const toggleSection = (status) => {
     setExpandedSections(prev => ({
@@ -85,6 +92,42 @@ const OrderAdmin = () => {
     }
   }
 
+  useEffect(() => {
+    fetchOrders()
+  }, [])
+
+  // Realtime: Listen for order changes
+  useEffect(() => {
+    const socket = socketRef.current
+    if (!socket) return
+
+    const handleOrderUpdate = (data) => {
+      console.log('[OrderAdmin] Order updated via socket:', data)
+      // Set recently updated for visual feedback
+      if (data?.id) setRecentlyUpdated(data.id)
+      // Refetch all orders to show latest changes
+      fetchOrders()
+    }
+
+    socket.on('order:created', handleOrderUpdate)
+    socket.on('order:cancelled', handleOrderUpdate)
+    socket.on('order:status_changed', handleOrderUpdate)
+
+    return () => {
+      socket.off('order:created', handleOrderUpdate)
+      socket.off('order:cancelled', handleOrderUpdate)
+      socket.off('order:status_changed', handleOrderUpdate)
+    }
+  }, [socketRef.current])
+  
+  // Clear recently updated flag after animation
+  useEffect(() => {
+    if (recentlyUpdated) {
+      const timer = setTimeout(() => setRecentlyUpdated(null), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [recentlyUpdated])
+
   const handleCancelOrder = async (orderId) => {
     if (!confirm('Bạn có chắc muốn hủy đơn hàng này?')) {
         return;
@@ -101,7 +144,7 @@ const OrderAdmin = () => {
 
         if (response.data.success) {
             toast.success('Đơn hàng đã được hủy thành công');
-            
+            setRecentlyUpdated(orderId);
             fetchOrders();
         }
     } catch (error) {
@@ -123,7 +166,7 @@ const handleStatusChange = async (orderId, newStatus) => {
 
         if (response.data.success) {
             toast.success('Cập nhật trạng thái đơn hàng thành công');
-            
+            setRecentlyUpdated(orderId);
             fetchOrders();
         }
     } catch (error) {
@@ -132,10 +175,6 @@ const handleStatusChange = async (orderId, newStatus) => {
         setUpdating(null);
     }
 };
-
-  useEffect(() => {
-    fetchOrders()
-  }, [])
 
   // ← THÊM: KIỂM TRA PRODUCT CÓ VẤN ĐỀ
   const hasProductIssue = (product) => {
@@ -146,12 +185,18 @@ const handleStatusChange = async (orderId, newStatus) => {
     const progressAction = getProgressAction(order.order_status)
     const isUpdating = updating === order._id
     const isFinished = order.order_status === 'delivered' || order.order_status === 'cancelled'
+    const isRecentlyUpdated = recentlyUpdated === order._id
 
     // ← KIỂM TRA CÓ SẢN PHẨM CÓ VẤN ĐỀ KHÔNG
     const hasIssues = order.items?.some(item => hasProductIssue(item.productId))
 
     return (
-      <div key={order._id + index} className='p-3 bg-white rounded border'>
+      <div 
+        key={order._id + index} 
+        className={`p-3 bg-white rounded border transition-all duration-300 ${
+          isRecentlyUpdated ? 'ring-2 ring-blue-400 shadow-lg' : ''
+        }`}
+      >
         {/* ← THÊM WARNING BANNER */}
         {hasIssues && order.order_status !== 'cancelled' && (
           <div className='bg-orange-100 border border-orange-400 text-orange-800 px-3 py-2 rounded mb-3 text-xs'>
@@ -172,7 +217,9 @@ const handleStatusChange = async (orderId, newStatus) => {
           </div>
 
           <div className="flex flex-col gap-2 items-end">
-            <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(order.order_status)}`}>
+            <span className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 ${getStatusBadge(order.order_status)} ${
+              isRecentlyUpdated ? 'animate-pulse' : ''
+            }`}>
               {order.order_status}
             </span>
 

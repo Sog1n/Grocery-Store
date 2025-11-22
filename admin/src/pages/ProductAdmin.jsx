@@ -5,6 +5,8 @@ import Axios from '../utils/Axios'
 import Loading from '../components/Loading'
 import ProductCardAdmin from '../components/ProductCardAdmin'
 import { IoSearchOutline } from "react-icons/io5"
+import { useSelector } from 'react-redux'
+import { useSocket } from '../socket/useSocket'
 
 const ProductAdmin = () => {
   const [productData, setProductData] = useState([])
@@ -12,6 +14,10 @@ const ProductAdmin = () => {
   const [loading, setLoading] = useState(false)
   const [totalPageCount, setTotalPageCount] = useState(1)
   const [search, setSearch] = useState("")
+
+  // Realtime: connect socket to refetch when products change
+  const adminToken = useSelector(s => s.user?.accessToken)
+  const socketRef = useSocket(adminToken)
 
   const fetchProductData = async () => {
     try {
@@ -42,6 +48,27 @@ const ProductAdmin = () => {
   useEffect(() => {
     fetchProductData()
   }, [page])
+
+  // Realtime: Refetch when products change
+  useEffect(() => {
+    const socket = socketRef.current
+    if (!socket) return
+
+    const handleProductChange = () => {
+      console.log('[ProductAdmin] Product changed via socket, refetching...')
+      fetchProductData()
+    }
+
+    socket.on('product:created', handleProductChange)
+    socket.on('product:updated', handleProductChange)
+    socket.on('product:deleted', handleProductChange)
+
+    return () => {
+      socket.off('product:created', handleProductChange)
+      socket.off('product:updated', handleProductChange)
+      socket.off('product:deleted', handleProductChange)
+    }
+  }, [socketRef.current, page, search])
 
   const handleNext = () => {
     if (page !== totalPageCount) {
