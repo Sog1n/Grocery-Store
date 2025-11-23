@@ -6,6 +6,7 @@ import OrderModel from '../models/order.model.js'
 import CartProductModel from '../models/cartproduct.model.js'
 import UserModel from '../models/user.model.js'
 import mongoose from 'mongoose'
+import { metrics } from '../middleware/prometheus.middleware.js'
 
 function sortObject(obj) {
   const sorted = {}
@@ -92,6 +93,10 @@ export async function createVNPayPayment(req, res) {
 
     console.log('✅ VNPay URL:', vnpUrl)
 
+    // 📊 Track metrics
+    metrics.recordVNPayTransaction('created', totalAmt);
+    metrics.recordPayment('pending', 'vnpay', totalAmt);
+
     return res.json({
       success: true,
       paymentUrl: vnpUrl
@@ -138,6 +143,10 @@ export async function vnpayReturn(req, res) {
         await CartProductModel.deleteMany({ userId: order.userId })
         await UserModel.updateOne({ _id: order.userId }, { shopping_cart: [] })
 
+        // 📊 Track metrics
+        metrics.recordVNPayTransaction('success', order.totalAmt);
+        metrics.recordPayment('paid', 'vnpay', order.totalAmt);
+
         return res.json({
           success: true,
           message: 'Payment successful',
@@ -147,6 +156,11 @@ export async function vnpayReturn(req, res) {
         order.payment_status = 'FAILED'
         order.order_status = 'cancelled'
         await order.save()
+
+        // 📊 Track metrics
+        metrics.recordVNPayTransaction('failed', order.totalAmt);
+        metrics.recordPayment('failed', 'vnpay', order.totalAmt);
+        metrics.recordOrder('cancelled', order.totalAmt);
 
         return res.json({
           success: false,
