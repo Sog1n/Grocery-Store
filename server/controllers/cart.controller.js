@@ -1,6 +1,7 @@
 import CartProductModel from "../models/cartproduct.model.js";
 import UserModel from "../models/user.model.js";
 import ProductModel from "../models/product.model.js";
+import { metrics } from "../middleware/prometheus.middleware.js";
 
 export const addToCartItemController = async(request,response)=>{
     try {
@@ -65,6 +66,9 @@ export const addToCartItemController = async(request,response)=>{
                 shopping_cart : productId
             }
         })
+
+        // 📊 Track metrics
+        metrics.recordCartAction('added');
 
         return response.json({
             data : save,
@@ -196,6 +200,9 @@ export const updateCartItemQtyController = async(request,response)=>{
             quantity : qty
         })
 
+        // 📊 Track metrics
+        metrics.recordCartAction('updated');
+
         return response.json({
             message : "Update cart",
             success : true,
@@ -226,6 +233,9 @@ export const deleteCartItemQtyController = async(request,response)=>{
       }
 
       const deleteCartItem = await CartProductModel.deleteOne({_id : _id, userId : userId })
+
+      // 📊 Track metrics
+      metrics.recordCartAction('removed');
 
       return response.json({
         message : "Item remove",
