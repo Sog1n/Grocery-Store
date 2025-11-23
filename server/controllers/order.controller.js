@@ -4,6 +4,7 @@ import OrderModel from "../models/order.model.js";
 import UserModel from "../models/user.model.js";
 import ProductModel from "../models/product.model.js";
 import mongoose from "mongoose";
+import { metrics } from "../middleware/prometheus.middleware.js";
 
 // ═══════════════════════════════════════════════════════════
 // HELPER FUNCTIONS - QUẢN LÝ TỒN KHO
@@ -204,6 +205,11 @@ export async function CashOnDeliveryOrderController(request, response) {
 
         console.log('✅ COD Order created:', generatedOrder.orderId);
 
+        // 📊 Track metrics
+        metrics.recordOrder('pending', totalAmt);
+        metrics.recordCODOrder('created', totalAmt);
+        metrics.recordPayment('pending', 'cod', totalAmt);
+
         return response.json({
             message: 'Order created successfully',
             success: true,
@@ -395,6 +401,13 @@ export async function webhookStripe(request, response) {
                     shopping_cart: []
                 });
                 await CartProductModel.deleteMany({ userId: userId });
+
+                // 📊 Track metrics for each order
+                for (const ord of order) {
+                    metrics.recordOrder('pending', ord.totalAmt);
+                    metrics.recordStripeTransaction('success', ord.totalAmt);
+                    metrics.recordPayment('paid', 'stripe', ord.totalAmt);
+                }
             }
             break;
         default:
