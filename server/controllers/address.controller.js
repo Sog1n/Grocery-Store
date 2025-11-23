@@ -1,5 +1,6 @@
 import AddressModel from "../models/address.model.js";
-import UserModel from "../models/user.model.js"; 
+import UserModel from "../models/user.model.js";
+import { metrics } from "../middleware/prometheus.middleware.js";
 
 export const addAddressController = async(request,response)=>{
     try {
@@ -22,6 +23,9 @@ export const addAddressController = async(request,response)=>{
                 address_details : saveAddress._id
             }
         })
+
+        // 📊 Track metrics
+        metrics.recordAddress('created');
 
         return response.json({
             message : "Address Created Successfully",
@@ -74,6 +78,9 @@ export const updateAddressController = async(request,response)=>{
             pincode
         })
 
+        // 📊 Track metrics
+        metrics.recordAddress('updated');
+
         return response.json({
             message : "Address Updated",
             error : false,
@@ -97,6 +104,9 @@ export const deleteAddresscontroller = async(request,response)=>{
         const disableAddress = await AddressModel.updateOne({ _id : _id, userId},{
             status : false
         })
+
+        // 📊 Track metrics
+        metrics.recordAddress('disabled');
 
         return response.json({
             message : "Address remove",
