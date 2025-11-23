@@ -8,6 +8,7 @@ import uploadImageClodinary from '../utils/uploadImageClodinary.js'
 import generatedOtp from '../utils/generatedOtp.js'
 import forgotPasswordTemplate from '../utils/forgotPasswordTemplate.js'
 import jwt from 'jsonwebtoken'
+import { metrics } from '../middleware/prometheus.middleware.js'
 
 export async function registerUserController(request,response){
     try {
@@ -24,6 +25,8 @@ export async function registerUserController(request,response){
         const user = await UserModel.findOne({ email })
 
         if(user){
+            // 📊 Track failed registration
+            metrics.recordAuthAttempt('register', 'failed');
             return response.json({
                 message : "Already register email",
                 error : true,
@@ -53,6 +56,10 @@ export async function registerUserController(request,response){
                 url : VerifyEmailUrl
             })
         })
+
+        // 📊 Track metrics
+        metrics.recordUser('Active');
+        metrics.recordAuthAttempt('register', 'success');
 
         return response.json({
             message : "User register successfully",
@@ -137,6 +144,8 @@ export async function loginController(request,response){
         const checkPassword = await bcryptjs.compare(password,user.password)
 
         if(!checkPassword){
+            // 📊 Track failed login
+            metrics.recordAuthAttempt('login', 'failed');
             return response.status(400).json({
                 message : "Check your password",
                 error : true,
@@ -158,6 +167,9 @@ export async function loginController(request,response){
         }
         response.cookie('accessToken',accesstoken,cookiesOption)
         response.cookie('refreshToken',refreshToken,cookiesOption)
+
+        // 📊 Track successful login
+        metrics.recordAuthAttempt('login', 'success');
 
         return response.json({
             message : "Login successfully",
