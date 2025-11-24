@@ -15,6 +15,7 @@ import cartRouter from './route/cart.route.js'
 import addressRouter from './route/address.route.js'
 import orderRouter from './route/order.route.js'
 import adminRouter from './route/admin.route.js'
+import { prometheusMiddleware, metricsHandler, metrics } from './middleware/prometheus.middleware.js'
 // import seedUsers from './utils/seedUsers.js'
 // import seedProducts from './utils/seedProducts.js'
 
@@ -30,7 +31,10 @@ app.use(helmet({
     crossOriginResourcePolicy : false
 }))
 
-const PORT = 8080 || process.env.PORT 
+// Prometheus middleware - đặt sau các middleware cơ bản
+app.use(prometheusMiddleware)
+
+const PORT = 8080 || process.env.PORT
 
 app.get("/",(request,response)=>{
     ///server to client
@@ -38,6 +42,9 @@ app.get("/",(request,response)=>{
         message : "Server is running " + PORT
     })
 })
+
+// Prometheus metrics endpoint
+app.get('/metrics', metricsHandler)
 
 app.use('/api/user',userRouter)
 app.use("/api/category",categoryRouter)
@@ -55,8 +62,17 @@ connectDB().then(async()=>{
     // Tạo dữ liệu sản phẩm mẫu
     // await seedProducts()
     
+    // Initialize Prometheus metrics
+    metrics.initialize()
+
+    // Load existing data into metrics
+    await metrics.loadExistingData()
+
+    // Set database connection status
+    metrics.setDbStatus(true)
+
     app.listen(PORT,()=>{
         console.log("Server is running",PORT)
+        console.log("📊 Prometheus metrics available at http://localhost:" + PORT + "/metrics")
     })
 })
-
