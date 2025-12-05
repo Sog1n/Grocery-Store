@@ -6,9 +6,15 @@ on:
   # Khi push code lên branch main hoặc dev
   push:
     branches: [ main, dev ]
+    paths:
+      - 'server/**'
+      - '.github/workflows/server-ci.yml'
   # Khi tạo pull request vào branch main hoặc dev
   pull_request:
     branches: [ main, dev ]
+    paths:
+      - 'server/**'
+      - '.github/workflows/server-ci.yml'
 
 jobs:
   # job 1: unit test
