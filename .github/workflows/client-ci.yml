@@ -34,7 +34,7 @@ jobs:
       with:
         node-version: '20.x'  # Sử dụng Node.js version 20
         cache: 'npm'  # Cache npm để cài đặt nhanh hơn
-        cache-dependency-path: client/package-lock.json  # Đường dẫn file lock
+        cache-dependency-path: client/age-lock.json  # Đường dẫn file lock
     
     # Bước 3: Cài đặt tất cả dependencies từ package.json
     - name: Install dependencies
