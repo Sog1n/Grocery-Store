@@ -4,3 +4,4 @@ const DisplayPriceInVND = (price) => {
         currency: 'VND'
     }).format(price)
 }
+export default DisplayPriceInVND
