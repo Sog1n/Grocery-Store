@@ -23,9 +23,7 @@
 - [API Documentation](#-api-documentation)
 - [Tài Khoản Demo](#-tài-khoản-demo)
 - [Screenshots](#-screenshots)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
-- [License](#-license)
+
 
 ## Giới Thiệu
 
