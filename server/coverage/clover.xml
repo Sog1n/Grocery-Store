@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1764728370911" clover="3.2.0">
-  <project timestamp="1764728370911" name="All files">
+<coverage generated="1765875975796" clover="3.2.0">
+  <project timestamp="1765875975796" name="All files">
     <metrics statements="737" coveredstatements="461" conditionals="371" coveredconditionals="183" methods="69" coveredmethods="42" elements="1177" coveredelements="686" complexity="0" loc="737" ncloc="737" packages="2" files="18" classes="18"/>
     <package name="controllers">
       <metrics statements="717" coveredstatements="448" conditionals="369" coveredconditionals="183" methods="61" coveredmethods="39"/>
-      <file name="address.controller.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\controllers\address.controller.js">
+      <file name="address.controller.js" path="D:\taphoa_test\server\controllers\address.controller.js">
         <metrics statements="29" coveredstatements="29" conditionals="8" coveredconditionals="4" methods="4" coveredmethods="4"/>
         <line num="4" count="2" type="stmt"/>
         <line num="5" count="2" type="stmt"/>
@@ -36,7 +36,7 @@
         <line num="101" count="1" type="stmt"/>
         <line num="108" count="1" type="stmt"/>
       </file>
-      <file name="admin.controller.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\controllers\admin.controller.js">
+      <file name="admin.controller.js" path="D:\taphoa_test\server\controllers\admin.controller.js">
         <metrics statements="28" coveredstatements="0" conditionals="12" coveredconditionals="0" methods="2" coveredmethods="0"/>
         <line num="8" count="0" type="stmt"/>
         <line num="9" count="0" type="stmt"/>
@@ -67,7 +67,7 @@
         <line num="102" count="0" type="stmt"/>
         <line num="108" count="0" type="stmt"/>
       </file>
-      <file name="cart.controller.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\controllers\cart.controller.js">
+      <file name="cart.controller.js" path="D:\taphoa_test\server\controllers\cart.controller.js">
         <metrics statements="81" coveredstatements="80" conditionals="50" coveredconditionals="42" methods="9" coveredmethods="9"/>
         <line num="5" count="2" type="stmt"/>
         <line num="6" count="7" type="stmt"/>
@@ -151,7 +151,7 @@
         <line num="301" count="2" type="stmt"/>
         <line num="310" count="1" type="stmt"/>
       </file>
-      <file name="category.controller.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\controllers\category.controller.js">
+      <file name="category.controller.js" path="D:\taphoa_test\server\controllers\category.controller.js">
         <metrics statements="32" coveredstatements="4" conditionals="18" coveredconditionals="0" methods="4" coveredmethods="0"/>
         <line num="5" count="1" type="stmt"/>
         <line num="6" count="0" type="stmt"/>
@@ -186,7 +186,7 @@
         <line num="119" count="0" type="stmt"/>
         <line num="127" count="0" type="stmt"/>
       </file>
-      <file name="order.controller.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\controllers\order.controller.js">
+      <file name="order.controller.js" path="D:\taphoa_test\server\controllers\order.controller.js">
         <metrics statements="219" coveredstatements="87" conditionals="97" coveredconditionals="31" methods="13" coveredmethods="6"/>
         <line num="15" count="3" type="stmt"/>
         <line num="16" count="3" type="stmt"/>
@@ -408,7 +408,7 @@
         <line num="662" count="0" type="stmt"/>
         <line num="669" count="0" type="stmt"/>
       </file>
-      <file name="product.controller.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\controllers\product.controller.js">
+      <file name="product.controller.js" path="D:\taphoa_test\server\controllers\product.controller.js">
         <metrics statements="102" coveredstatements="79" conditionals="81" coveredconditionals="50" methods="8" coveredmethods="5"/>
         <line num="4" count="2" type="stmt"/>
         <line num="5" count="0" type="stmt"/>
@@ -513,7 +513,7 @@
         <line num="366" count="8" type="stmt"/>
         <line num="378" count="1" type="stmt"/>
       </file>
-      <file name="subCategory.controller.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\controllers\subCategory.controller.js">
+      <file name="subCategory.controller.js" path="D:\taphoa_test\server\controllers\subCategory.controller.js">
         <metrics statements="31" coveredstatements="4" conditionals="15" coveredconditionals="0" methods="4" coveredmethods="0"/>
         <line num="3" count="1" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
@@ -547,7 +547,7 @@
         <line num="100" count="0" type="stmt"/>
         <line num="107" count="0" type="stmt"/>
       </file>
-      <file name="uploadImage.controller.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\controllers\uploadImage.controller.js">
+      <file name="uploadImage.controller.js" path="D:\taphoa_test\server\controllers\uploadImage.controller.js">
         <metrics statements="6" coveredstatements="1" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="3" count="1" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
@@ -556,7 +556,7 @@
         <line num="9" count="0" type="stmt"/>
         <line num="16" count="0" type="stmt"/>
       </file>
-      <file name="user.controller.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\controllers\user.controller.js">
+      <file name="user.controller.js" path="D:\taphoa_test\server\controllers\user.controller.js">
         <metrics statements="128" coveredstatements="103" conditionals="76" coveredconditionals="46" methods="11" coveredmethods="10"/>
         <line num="13" count="7" type="stmt"/>
         <line num="14" count="7" type="stmt"/>
@@ -687,7 +687,7 @@
         <line num="507" count="1" type="stmt"/>
         <line num="514" count="0" type="stmt"/>
       </file>
-      <file name="vnpay.controller.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\controllers\vnpay.controller.js">
+      <file name="vnpay.controller.js" path="D:\taphoa_test\server\controllers\vnpay.controller.js">
         <metrics statements="61" coveredstatements="61" conditionals="10" coveredconditionals="10" methods="5" coveredmethods="5"/>
         <line num="11" count="21" type="stmt"/>
         <line num="12" count="21" type="stmt"/>
@@ -754,36 +754,36 @@
     </package>
     <package name="utils">
       <metrics statements="20" coveredstatements="13" conditionals="2" coveredconditionals="0" methods="8" coveredmethods="3"/>
-      <file name="forgotPasswordTemplate.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\utils\forgotPasswordTemplate.js">
+      <file name="forgotPasswordTemplate.js" path="D:\taphoa_test\server\utils\forgotPasswordTemplate.js">
         <metrics statements="2" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="0" type="stmt"/>
       </file>
-      <file name="generatedAccessToken.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\utils\generatedAccessToken.js">
+      <file name="generatedAccessToken.js" path="D:\taphoa_test\server\utils\generatedAccessToken.js">
         <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="3" count="1" type="stmt"/>
         <line num="4" count="1" type="stmt"/>
         <line num="9" count="1" type="stmt"/>
       </file>
-      <file name="generatedOtp.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\utils\generatedOtp.js">
+      <file name="generatedOtp.js" path="D:\taphoa_test\server\utils\generatedOtp.js">
         <metrics statements="2" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="0" type="stmt"/>
       </file>
-      <file name="generatedRefreshToken.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\utils\generatedRefreshToken.js">
+      <file name="generatedRefreshToken.js" path="D:\taphoa_test\server\utils\generatedRefreshToken.js">
         <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="4" count="1" type="stmt"/>
         <line num="5" count="1" type="stmt"/>
         <line num="10" count="1" type="stmt"/>
         <line num="17" count="1" type="stmt"/>
       </file>
-      <file name="seedProducts.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\utils\seedProducts.js">
+      <file name="seedProducts.js" path="D:\taphoa_test\server\utils\seedProducts.js">
         <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       </file>
-      <file name="seedUsers.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\utils\seedUsers.js">
+      <file name="seedUsers.js" path="D:\taphoa_test\server\utils\seedUsers.js">
         <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       </file>
-      <file name="uploadImageClodinary.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\utils\uploadImageClodinary.js">
+      <file name="uploadImageClodinary.js" path="D:\taphoa_test\server\utils\uploadImageClodinary.js">
         <metrics statements="7" coveredstatements="2" conditionals="2" coveredconditionals="0" methods="3" coveredmethods="0"/>
         <line num="3" count="1" type="stmt"/>
         <line num="9" count="1" type="stmt"/>
@@ -793,7 +793,7 @@
         <line num="14" count="0" type="stmt"/>
         <line num="18" count="0" type="stmt"/>
       </file>
-      <file name="verifyEmailTemplate.js" path="C:\Users\ADMIN\Desktop\STUDY\SoftwareTesting\Grocery-Store\server\utils\verifyEmailTemplate.js">
+      <file name="verifyEmailTemplate.js" path="D:\taphoa_test\server\utils\verifyEmailTemplate.js">
         <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="3" type="stmt"/>

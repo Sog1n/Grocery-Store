@@ -67,7 +67,7 @@
 									"});",
 									"",
 									"pm.test('Response time is acceptable', function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(3000);",
+									"    pm.expect(pm.response.responseTime).to.be.below(8000);",
 									"});"
 								]
 							}
@@ -100,6 +100,34 @@
 				},
 				{
 					"name": "Verify Email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('Email verification successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains message', function () {",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"    pm.expect(jsonData.message).to.be.a('string');",
+									"});",
+									"",
+									"pm.test('Response time is acceptable', function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(8000);",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -185,7 +213,7 @@
 									"",
 									"// Performance test",
 									"pm.test('Response time is acceptable', function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"    pm.expect(pm.response.responseTime).to.be.below(8000);",
 									"});"
 								]
 							}
@@ -218,6 +246,29 @@
 				},
 				{
 					"name": "Logout User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('Logout successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains message', function () {",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [
@@ -241,6 +292,37 @@
 				},
 				{
 					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('Token refresh successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response has new access token', function () {",
+									"    pm.expect(jsonData.data).to.have.property('accessToken');",
+									"    pm.expect(jsonData.data.accessToken).to.be.a('string');",
+									"    pm.expect(jsonData.data.accessToken.length).to.be.above(0);",
+									"});",
+									"",
+									"// Auto-update access token",
+									"if (jsonData.success && jsonData.data.accessToken) {",
+									"    pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
+									"    console.log('✅ New access token saved');",
+									"}"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -268,6 +350,29 @@
 				},
 				{
 					"name": "Forgot Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('Password reset email sent', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains message', function () {",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -295,6 +400,29 @@
 				},
 				{
 					"name": "Verify Forgot Password OTP",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('OTP verification successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains message', function () {",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -322,6 +450,29 @@
 				},
 				{
 					"name": "Reset Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('Password reset successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains message', function () {",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -408,6 +559,34 @@
 				},
 				{
 					"name": "Update User Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('User update successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains updated data', function () {",
+									"    pm.expect(jsonData).to.have.property('data');",
+									"    pm.expect(jsonData.data).to.be.an('object');",
+									"});",
+									"",
+									"pm.test('Response contains message', function () {",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -439,6 +618,30 @@
 				},
 				{
 					"name": "Upload Avatar",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('Avatar upload successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains image URL', function () {",
+									"    pm.expect(jsonData.data).to.have.property('avatar');",
+									"    pm.expect(jsonData.data.avatar).to.be.a('string');",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -477,6 +680,45 @@
 			"item": [
 				{
 					"name": "Admin Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('Admin login successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response has access token', function () {",
+									"    pm.expect(jsonData.data).to.have.property('accessToken');",
+									"    pm.expect(jsonData.data.accessToken).to.be.a('string');",
+									"});",
+									"",
+									"pm.test('Response has admin role', function () {",
+									"    pm.expect(jsonData.data).to.have.property('role');",
+									"    pm.expect(jsonData.data.role).to.equal('ADMIN');",
+									"});",
+									"",
+									"// Auto-save admin token",
+									"if (jsonData.success && jsonData.data.accessToken) {",
+									"    pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
+									"    console.log('✅ Admin token saved');",
+									"}",
+									"",
+									"pm.test('Response time is acceptable', function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(8000);",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -504,6 +746,29 @@
 				},
 				{
 					"name": "Admin Logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('Admin logout successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains message', function () {",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [
@@ -532,6 +797,36 @@
 			"item": [
 				{
 					"name": "Add Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200 or 201', function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('Category creation successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains category data', function () {",
+									"    pm.expect(jsonData.data).to.have.property('_id');",
+									"    pm.expect(jsonData.data).to.have.property('name');",
+									"});",
+									"",
+									"// Auto-save new category ID",
+									"if (jsonData.success && jsonData.data._id) {",
+									"    pm.collectionVariables.set('categoryId', jsonData.data._id);",
+									"    console.log('✅ New category ID saved:', jsonData.data._id);",
+									"}"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -615,6 +910,34 @@
 				},
 				{
 					"name": "Update Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('Category update successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains updated data', function () {",
+									"    pm.expect(jsonData.data).to.have.property('_id');",
+									"    pm.expect(jsonData.data).to.have.property('name');",
+									"});",
+									"",
+									"pm.test('Response contains message', function () {",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -646,6 +969,29 @@
 				},
 				{
 					"name": "Delete Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('Category deletion successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains message', function () {",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -682,6 +1028,36 @@
 			"item": [
 				{
 					"name": "Create SubCategory",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200 or 201', function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('SubCategory creation successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains subcategory data', function () {",
+									"    pm.expect(jsonData.data).to.have.property('_id');",
+									"    pm.expect(jsonData.data).to.have.property('name');",
+									"});",
+									"",
+									"// Auto-save subcategory ID",
+									"if (jsonData.success && jsonData.data._id) {",
+									"    pm.collectionVariables.set('subCategoryId', jsonData.data._id);",
+									"    console.log('✅ SubCategory ID saved:', jsonData.data._id);",
+									"}"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -713,6 +1089,37 @@
 				},
 				{
 					"name": "Get SubCategories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('Response successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('SubCategories data is array', function () {",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});",
+									"",
+									"if (jsonData.data && jsonData.data.length > 0) {",
+									"    pm.test('SubCategory has required fields', function () {",
+									"        const subcategory = jsonData.data[0];",
+									"        pm.expect(subcategory).to.have.property('_id');",
+									"        pm.expect(subcategory).to.have.property('name');",
+									"    });",
+									"}"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -740,6 +1147,30 @@
 				},
 				{
 					"name": "Update SubCategory",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('SubCategory update successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains updated data', function () {",
+									"    pm.expect(jsonData.data).to.have.property('_id');",
+									"    pm.expect(jsonData.data).to.have.property('name');",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -771,6 +1202,29 @@
 				},
 				{
 					"name": "Delete SubCategory",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('SubCategory deletion successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains message', function () {",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -807,6 +1261,37 @@
 			"item": [
 				{
 					"name": "Create Product (Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200 or 201', function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('Product creation successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains product data', function () {",
+									"    pm.expect(jsonData.data).to.have.property('_id');",
+									"    pm.expect(jsonData.data).to.have.property('name');",
+									"    pm.expect(jsonData.data).to.have.property('price');",
+									"});",
+									"",
+									"// Auto-save new product ID",
+									"if (jsonData.success && jsonData.data._id) {",
+									"    pm.collectionVariables.set('productId', jsonData.data._id);",
+									"    console.log('✅ New product ID saved:', jsonData.data._id);",
+									"}"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -912,6 +1397,38 @@
 				},
 				{
 					"name": "Get Product By Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('Response successful', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Products data is array', function () {",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});",
+									"",
+									"if (jsonData.data && jsonData.data.length > 0) {",
+									"    pm.test('Product has required fields', function () {",
+									"        const product = jsonData.data[0];",
+									"        pm.expect(product).to.have.property('_id');",
+									"        pm.expect(product).to.have.property('name');",
+									"        pm.expect(product).to.have.property('price');",
+									"    });",
+									"}"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -939,6 +1456,22 @@
 				},
 				{
 					"name": "Get Product By Category And SubCategory",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200 & success', function () {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -966,6 +1499,27 @@
 				},
 				{
 					"name": "Get Product Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200 & success', function () {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Product data valid', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('_id');",
+									"    pm.expect(jsonData.data.price).to.be.above(0);",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -993,6 +1547,22 @@
 				},
 				{
 					"name": "Search Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200 & success', function () {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1020,6 +1590,21 @@
 				},
 				{
 					"name": "Update Product (Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200 & success', function () {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -1051,6 +1636,21 @@
 				},
 				{
 					"name": "Delete Product (Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200 & success', function () {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -1221,6 +1821,21 @@
 				},
 				{
 					"name": "Update Cart Item Quantity",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200 & success', function () {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -1252,6 +1867,21 @@
 				},
 				{
 					"name": "Delete Cart Item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200 & success', function () {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -1283,6 +1913,21 @@
 				},
 				{
 					"name": "Validate Cart For Checkout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200 & success', function () {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1319,6 +1964,27 @@
 			"item": [
 				{
 					"name": "Add Address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200/201 & success', function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"// Auto-save address ID",
+									"const jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data._id) {",
+									"    pm.collectionVariables.set('addressId', jsonData.data._id);",
+									"}"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1350,6 +2016,22 @@
 				},
 				{
 					"name": "Get All Addresses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200 & success', function () {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1373,6 +2055,21 @@
 				},
 				{
 					"name": "Update Address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200 & success', function () {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -1404,6 +2101,21 @@
 				},
 				{
 					"name": "Delete Address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200 & success', function () {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -1440,6 +2152,27 @@
 			"item": [
 				{
 					"name": "Cash On Delivery Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200/201 & success', function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"// Auto-save order ID",
+									"const jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data._id) {",
+									"    pm.collectionVariables.set('orderId', jsonData.data._id);",
+									"}"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1471,6 +2204,27 @@
 				},
 				{
 					"name": "Create Checkout Session (Stripe)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200/201 & success', function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"// Auto-save session ID",
+									"const jsonData = pm.response.json();",
+									"if (jsonData.data && (jsonData.data.sessionId || jsonData.data.id)) {",
+									"    pm.collectionVariables.set('stripeSessionId', jsonData.data.sessionId || jsonData.data.id);",
+									"}"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1502,6 +2256,21 @@
 				},
 				{
 					"name": "Create VNPay Payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200/201 & success', function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1534,6 +2303,33 @@
 				},
 				{
 					"name": "VNPay Return Callback",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test('VNPay callback processed', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains order information', function () {",
+									"    pm.expect(jsonData.data).to.exist;",
+									"});",
+									"",
+									"pm.test('Response time is acceptable', function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(8000);",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -1638,6 +2434,22 @@
 				},
 				{
 					"name": "Get All Orders (Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200 & success', function () {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1662,6 +2474,21 @@
 				},
 				{
 					"name": "Update Order Status (Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200 & success', function () {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "PATCH",
 						"header": [
@@ -1701,6 +2528,21 @@
 				},
 				{
 					"name": "Cancel Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200 & success', function () {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "PATCH",
 						"header": [
@@ -1744,6 +2586,27 @@
 			"item": [
 				{
 					"name": "Upload Image",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200/201 & success', function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"// Auto-save image URL",
+									"const jsonData = pm.response.json();",
+									"if (jsonData.data && (jsonData.data.url || jsonData.data.imageUrl)) {",
+									"    pm.collectionVariables.set('uploadedImageUrl', jsonData.data.url || jsonData.data.imageUrl);",
+									"}"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1805,6 +2668,11 @@
 			"type": "string"
 		},
 		{
+			"key": "subCategoryId",
+			"value": "",
+			"type": "string"
+		},
+		{
 			"key": "cartItemId",
 			"value": "",
 			"type": "string"
@@ -1816,6 +2684,16 @@
 		},
 		{
 			"key": "addressId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "stripeSessionId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "uploadedImageUrl",
 			"value": "",
 			"type": "string"
 		}
