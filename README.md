@@ -22,7 +22,6 @@
   - [Deploy lên Railway](#deploy-lên-railway)
 - [API Documentation](#-api-documentation)
 - [Tài Khoản Demo](#-tài-khoản-demo)
-- [Screenshots](#-screenshots)
 
 
 ## Giới Thiệu
