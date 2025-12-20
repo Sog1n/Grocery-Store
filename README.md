@@ -1,4 +1,9 @@
 # 🛒 Grocery Store - Hệ Thống Cửa Hàng Tạp Hóa Trực Tuyến
+THÀNH VIÊN NHÓM 2:
++ TRẦN HẢO ĐIỀN
++ NGÔ TUẤN ANH
++ NGUYỄN PHƯƠNG VINH
++ LÊ NGỌC HIỆP
 
 ![Banner](./Thumnails.png)
 
