@@ -1,9 +1,9 @@
 # 🛒 Grocery Store - Hệ Thống Cửa Hàng Tạp Hóa Trực Tuyến
 THÀNH VIÊN NHÓM 2:
-+ TRẦN HẢO ĐIỀN
-+ NGÔ TUẤN ANH
-+ NGUYỄN PHƯƠNG VINH
-+ LÊ NGỌC HIỆP
++ TRẦN HẢO ĐIỀN - 3122411042
++ NGÔ TUẤN ANH - 3122411007
++ NGUYỄN PHƯƠNG VINH - 3122411053
++ LÊ NGỌC HIỆP - 3122411247
 
 ![Banner](./Thumnails.png)
 
