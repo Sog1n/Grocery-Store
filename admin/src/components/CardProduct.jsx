@@ -1,5 +1,5 @@
 import React from 'react'
-import { DisplayPriceInRupees } from '../utils/DisplayPriceInRupees'
+import DisplayPriceInVND from '../utils/DisplayPriceInRupees'
 import { Link } from 'react-router-dom'
 import { valideURLConvert } from '../utils/valideURLConvert'
 import { pricewithDiscount } from '../utils/PriceWithDiscount'
@@ -46,7 +46,7 @@ const CardProduct = ({data}) => {
       <div className='px-2 lg:px-0 flex items-center justify-between gap-1 lg:gap-3 text-sm lg:text-base'>
         <div className='flex items-center gap-1'>
           <div className='font-semibold'>
-              {DisplayPriceInRupees(pricewithDiscount(data.price,data.discount))} 
+              {DisplayPriceInVND(pricewithDiscount(data.price,data.discount))} 
           </div>
           
           

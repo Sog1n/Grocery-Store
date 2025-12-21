@@ -24,7 +24,7 @@ export async function registerUserController(request,response){
         const user = await UserModel.findOne({ email })
 
         if(user){
-            return response.json({
+            return response.status(400).json({
                 message : "Already register email",
                 error : true,
                 success : false

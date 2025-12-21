@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { IoClose } from 'react-icons/io5'
 import { Link, useNavigate } from 'react-router-dom'
 import { useGlobalContext } from '../provider/GlobalProvider'
-import { DisplayPriceInRupees } from '../utils/DisplayPriceInRupees'
+import DisplayPriceInVND from '../utils/DisplayPriceInRupees'
 import { FaCaretRight, FaExclamationTriangle } from "react-icons/fa"
 import { useSelector } from 'react-redux'
 import AddToCartButton from './AddToCartButton'
@@ -156,7 +156,7 @@ const DisplayCartItem = ({close}) => {
 
                                 <div className='flex items-center justify-between px-4 py-2 bg-blue-100 text-blue-500 rounded-full'>
                                     <p>Your total savings</p>
-                                    <p>{DisplayPriceInRupees(notDiscountTotalPrice - validTotalPrice)}</p>
+                                    <p>{DisplayPriceInVND(notDiscountTotalPrice - validTotalPrice)}</p>
                                 </div>
 
                                 <div className='bg-white rounded-lg p-4 grid gap-5 overflow-auto'>
@@ -214,7 +214,7 @@ const DisplayCartItem = ({close}) => {
                                                             <p className={`font-semibold ${
                                                                 itemHasIssue ? 'line-through text-gray-400' : ''
                                                             }`}>
-                                                                {DisplayPriceInRupees(pricewithDiscount(product?.price, product?.discount))}
+                                                                {DisplayPriceInVND(pricewithDiscount(product?.price, product?.discount))}
                                                             </p>
                                                         </div>
 
@@ -243,9 +243,9 @@ const DisplayCartItem = ({close}) => {
                                         <p>Items total</p>
                                         <p className='flex items-center gap-2'>
                                             <span className='line-through text-neutral-400'>
-                                                {DisplayPriceInRupees(notDiscountTotalPrice)}
+                                                {DisplayPriceInVND(notDiscountTotalPrice)}
                                             </span>
-                                            <span>{DisplayPriceInRupees(validTotalPrice)}</span>
+                                            <span>{DisplayPriceInVND(validTotalPrice)}</span>
                                         </p>
                                     </div>
                                     <div className='flex gap-4 justify-between ml-1'>
@@ -258,7 +258,7 @@ const DisplayCartItem = ({close}) => {
                                     </div>
                                     <div className='font-semibold flex items-center justify-between gap-4'>
                                         <p>Grand total</p>
-                                        <p>{DisplayPriceInRupees(validTotalPrice)}</p>
+                                        <p>{DisplayPriceInVND(validTotalPrice)}</p>
                                     </div>
 
                                     {/* ← NOTE NẾU CÓ SẢN PHẨM BỊ LOẠI */}
@@ -293,7 +293,7 @@ const DisplayCartItem = ({close}) => {
                                     : 'bg-gray-400 cursor-not-allowed'
                             }`}>
                                 <div>
-                                    {DisplayPriceInRupees(validTotalPrice)}
+                                    {DisplayPriceInVND(validTotalPrice)}
                                 </div>
                                 <button 
                                     onClick={redirectToCheckoutPage} 

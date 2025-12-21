@@ -28,7 +28,7 @@ export async function AdminloginController(request, response) {
         }
 
         if (admin.role !== "ADMIN") {
-            return res.status(400).json({
+            return response.status(400).json({
                 message: "You do not have admin rights",
                 error: true,
                 success: false,

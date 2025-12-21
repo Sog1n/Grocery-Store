@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import fetchUserDetails from './utils/fetchUserDetails';
 import { setUserDetails } from './store/userSlice';
 import { setAllCategory, setAllSubCategory, setLoadingCategory } from './store/productSlice';
+import { setOrder } from './store/orderSlice';
 import { useDispatch } from 'react-redux';
 import Axios from './utils/Axios';
 import SummaryApi from './common/SummaryApi';
@@ -14,6 +15,7 @@ import { handleAddItemCart } from './store/cartProduct'
 import GlobalProvider from './provider/GlobalProvider';
 import { FaCartShopping } from "react-icons/fa6";
 import CartMobileLink from './components/CartMobile';
+import SocketManager from './socket/SocketManager';
 
 function App() {
   const dispatch = useDispatch()
@@ -69,17 +71,32 @@ function App() {
     }
   }
 
+  const fetchOrders = async () => {
+    try {
+      const response = await Axios({
+        ...SummaryApi.getOrderItems
+      })
+      const { data: responseData } = response
 
+      if (responseData.success) {
+        dispatch(setOrder(responseData.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))))
+      }
+    } catch (error) {
+      // User might not be logged in, that's ok
+    }
+  }
 
   useEffect(() => {
     fetchUser()
     fetchCategory()
     fetchSubCategory()
+    fetchOrders()
     // fetchCartItem()
   }, [])
 
   return (
     <GlobalProvider>
+      <SocketManager />
       {!hideLayout && <Header />}
       <main className='min-h-[78vh]'>
         <Outlet />

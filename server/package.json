@@ -5,7 +5,12 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
+    "test:unit": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest __tests__/unit --runInBand",
+    "test:integration": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest __tests__/integration --runInBand",
+    "test:watch": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --watch --runInBand",
+    "test:coverage": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --coverage --runInBand"
   },
   "author": "",
   "license": "ISC",
@@ -26,8 +31,36 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.4",
+  "redis": "^4.6.7",
+  "socket.io": "^4.8.1",
+  "@socket.io/redis-adapter": "^7.1.0",
     "qs": "^6.14.0",
     "resend": "^3.5.0",
     "stripe": "^16.12.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.2.0",
+    "cross-env": "^7.0.3",
+    "jest": "^29.7.0",
+    "mongodb-memory-server": "^10.3.0",
+    "supertest": "^7.1.4"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "controllers/**/*.js",
+      "routes/**/*.js",
+      "utils/**/*.js"
+    ],
+    "testMatch": [
+      "**/__tests__/unit/**/*.test.[jt]s?(x)",
+      "**/__tests__/unit/**/*test.[jt]s?(x)",
+      "**/__tests__/integration/**/*.test.[jt]s?(x)"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/__tests__/unit/setup.js"
+    ],
+    "testTimeout": 30000
   }
 }

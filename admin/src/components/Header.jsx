@@ -8,7 +8,7 @@ import { BsCart4 } from "react-icons/bs";
 import { useSelector } from 'react-redux';
 import { GoTriangleDown, GoTriangleUp } from "react-icons/go";
 import UserMenu from './UserMenu';
-import { DisplayPriceInRupees } from '../utils/DisplayPriceInRupees';
+import DisplayPriceInVND from '../utils/DisplayPriceInRupees';
 import { useGlobalContext } from '../provider/GlobalProvider';
 import DisplayCartItem from './DisplayCartItem';
 import isAdmin from '../utils/isAdmin'
@@ -64,7 +64,7 @@ const Header = () => {
                     <div className='container mx-auto flex items-center px-2 justify-between'>
                         {/**logo */}
                         <div className='h-full'>
-                            <Link to={"/"} className='h-full flex justify-center items-center'>
+                            <Link to={"/dashboard"} className='h-full flex justify-center items-center'>
                                 <img
                                     src={logo}
                                     width={170}
@@ -138,7 +138,7 @@ const Header = () => {
                                             cartItem[0] ? (
                                                 <div>
                                                     <p>{totalQty} Items</p>
-                                                    <p>{DisplayPriceInRupees(totalPrice)}</p>
+                                                    <p>{DisplayPriceInVND(totalPrice)}</p>
                                                 </div>
                                             ) : (
                                                 <p>My Cart</p>

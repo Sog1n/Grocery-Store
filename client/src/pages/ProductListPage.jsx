@@ -7,6 +7,7 @@ import Loading from '../components/Loading'
 import CardProduct from '../components/CardProduct'
 import { useSelector } from 'react-redux'
 import { valideURLConvert } from '../utils/valideURLConvert'
+import { useSocket } from '../socket/useSocket'
 
 const ProductListPage = () => {
   const [data, setData] = useState([])
@@ -16,6 +17,10 @@ const ProductListPage = () => {
   const params = useParams()
   const AllSubCategory = useSelector(state => state.product.allSubCategory)
   const [DisplaySubCategory, setDisplaySubCategory] = useState([])
+  
+  // Realtime: connect socket to refetch on product changes
+  const userToken = useSelector(s => s.user?.accessToken)
+  const socketRef = useSocket(userToken)
 
   const subCategory = params?.subCategory?.split("-")
   const subCategoryName = subCategory?.slice(0, subCategory?.length - 1)?.join(" ")
@@ -71,6 +76,30 @@ const ProductListPage = () => {
     })
     setDisplaySubCategory(sub)
   }, [params, AllSubCategory, categoryId])
+
+  // Realtime: refetch when product changes
+  useEffect(() => {
+    const socket = socketRef.current
+    if (!socket) return
+    
+    const handleProductChange = () => {
+      console.log('[ProductListPage] Product changed via socket, refetching...')
+      // Reset to page 1 and refetch
+      setPage(1)
+      setData([])
+      fetchProductdata()
+    }
+    
+    socket.on('product:created', handleProductChange)
+    socket.on('product:updated', handleProductChange)
+    socket.on('product:deleted', handleProductChange)
+    
+    return () => {
+      socket.off('product:created', handleProductChange)
+      socket.off('product:updated', handleProductChange)
+      socket.off('product:deleted', handleProductChange)
+    }
+  }, [socketRef.current, categoryId, subCategoryId])
 
   const handleLoadMore = () => {
     if (page < totalPage && !loading) {

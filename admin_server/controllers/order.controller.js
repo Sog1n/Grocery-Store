@@ -4,6 +4,7 @@ import OrderModel from "../models/order.model.js";
 import UserModel from "../models/user.model.js";
 import ProductModel from "../models/product.model.js";
 import mongoose from "mongoose";
+import { getIO } from "../socket/index.js";
 
 // ═══════════════════════════════════════════════════════════
 // HELPER FUNCTIONS - QUẢN LÝ TỒN KHO
@@ -209,6 +210,25 @@ export async function CashOnDeliveryOrderController(request, response) {
         await UserModel.updateOne({ _id: userId }, { shopping_cart: [] });
 
         console.log('✅ Order created with stock deduction:', generatedOrder.orderId);
+
+        try {
+            const io = getIO()
+            const eventData = { id: generatedOrder._id, orderId: generatedOrder.orderId, userId: generatedOrder.userId, status: generatedOrder.order_status }
+            console.log('[Order Controller] Emitting order:created to:', {
+              userRoom: `user:${generatedOrder.userId}`,
+              adminRoom: 'admin:all',
+              broadcast: 'user:all',
+              eventData
+            })
+            // Emit to specific user room (if user has token and is connected)
+            io.to(`user:${generatedOrder.userId}`).emit('order:created', eventData)
+            // Also emit to admin room
+            io.to('admin:all').emit('order:created', eventData)
+            // Also emit to all users (for realtime order count, etc.)
+            io.to('user:all').emit('order:created', eventData)
+        } catch (e) {
+            console.error('[Order Controller] Failed to emit socket event:', e)
+        }
 
         return response.json({
             message: 'Order created successfully',
@@ -530,6 +550,21 @@ export async function updateOrderStatusController(req, res) {
             order.order_status = order_status;
             await order.save();
 
+            try {
+                const io = getIO()
+                const eventData = { id: order._id, orderId: order.orderId, status: order.order_status }
+                console.log('[Order Controller] Emitting order:cancelled to:', {
+                  userRoom: `user:${order.userId}`,
+                  adminRoom: 'admin:all',
+                  broadcast: 'user:all'
+                })
+                io.to(`user:${order.userId}`).emit('order:status_changed', eventData)
+                io.to('admin:all').emit('order:status_changed', eventData)
+                io.to('user:all').emit('order:status_changed', eventData)
+            } catch (e) {
+                console.error('[Order Controller] Failed to emit socket event:', e)
+            }
+
             return res.json({
                 message: 'Order cancelled and stock restored successfully',
                 data: order,
@@ -542,6 +577,25 @@ export async function updateOrderStatusController(req, res) {
 
         order.order_status = order_status;
         await order.save();
+
+        try {
+            const io = getIO()
+            const eventData = { id: order._id, orderId: order.orderId, status: order.order_status }
+            console.log('[Order Controller] Emitting order:status_changed to:', {
+              userRoom: `user:${order.userId}`,
+              adminRoom: 'admin:all',
+              broadcast: 'user:all',
+              eventData
+            })
+            // Emit to specific user
+            io.to(`user:${order.userId}`).emit('order:status_changed', eventData)
+            // Emit to all admins
+            io.to('admin:all').emit('order:status_changed', eventData)
+            // Emit to all users (so any user viewing orders can see updates)
+            io.to('user:all').emit('order:status_changed', eventData)
+        } catch (e) {
+            console.error('[Order Controller] Failed to emit socket event:', e)
+        }
 
         return res.json({
             message: 'Order status updated successfully',

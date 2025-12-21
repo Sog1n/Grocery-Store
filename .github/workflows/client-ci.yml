@@ -1,0 +1,50 @@
+# Tên của workflow hiển thị trên GitHub Actions tab
+name: Client UI Tests
+
+# Khi nào workflow này sẽ được kích hoạt?
+on:
+  # Khi push code lên branch main hoặc dev
+  push:
+    branches: [ main, dev ]
+    paths:
+      - 'client/**'
+      - '.github/workflows/client-ci.yml'
+  # Khi tạo pull request vào branch main hoặc dev
+  pull_request:
+    branches: [ main, dev ]
+    paths:
+      - 'client/**'
+      - '.github/workflows/client-ci.yml'
+
+jobs:
+  # job 1: UI test
+  ui-test:
+    name: UI Tests
+    # Chạy trên máy ảo Ubuntu (Linux) phiên bản mới nhất
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Bước 1: Lấy code từ repository về máy ảo
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    # Bước 2: Cài đặt Node.js phiên bản 20
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'  # Sử dụng Node.js version 20
+        cache: 'npm'  # Cache npm để cài đặt nhanh hơn
+        cache-dependency-path: client/package-lock.json  # Đường dẫn file lock
+    
+    # Bước 3: Cài đặt tất cả dependencies từ package.json
+    - name: Install dependencies
+      working-directory: ./client  # Chạy lệnh trong thư mục client
+      run: npm ci  # npm ci = clean install (nhanh hơn npm install)
+    
+    # Bước 4: Chạy UI tests
+    - name: Run UI Tests
+      working-directory: ./client
+      run: npm test  # Chạy script test trong package.json
+      env:
+        NODE_ENV: test  # Set môi trường là test
+

@@ -1,6 +1,7 @@
-export const DisplayPriceInRupees = (price)=>{
-    return new Intl.NumberFormat('en-IN',{
-        style : 'currency',
-        currency : 'VND'
+const DisplayPriceInVND = (price) => {
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
     }).format(price)
 }
+export default DisplayPriceInVND

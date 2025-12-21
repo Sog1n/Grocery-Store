@@ -1,4 +1,5 @@
 import ProductModel from "../models/product.model.js";
+import { getIO } from "../socket/index.js";
 
 export const createProductController = async(request,response)=>{
     try {
@@ -38,6 +39,15 @@ export const createProductController = async(request,response)=>{
             more_details,
         })
         const saveProduct = await product.save()
+
+        // Emit realtime event (minimal payload)
+        try {
+            const io = getIO()
+            io.to('user:all').emit('product:created', { id: saveProduct._id, name: saveProduct.name, category: saveProduct.category, price: saveProduct.price })
+            io.to('admin:all').emit('product:created', { id: saveProduct._id, name: saveProduct.name })
+        } catch (e) {
+            // socket not initialized yet; ignore in dev/test
+        }
 
         return response.json({
             message : "Product Created Successfully",
@@ -220,6 +230,12 @@ export const updateProductDetails = async(request,response)=>{
             ...request.body
         })
 
+        try {
+            const io = getIO()
+            io.to('user:all').emit('product:updated', { id: _id, changes: request.body })
+            io.to('admin:all').emit('product:updated', { id: _id, changes: request.body })
+        } catch (e) {}
+
         return response.json({
             message : "updated successfully",
             data : updateProduct,
@@ -250,6 +266,12 @@ export const deleteProductDetails = async(request,response)=>{
         }
 
         const deleteProduct = await ProductModel.deleteOne({_id : _id })
+
+        try {
+            const io = getIO()
+            io.to('user:all').emit('product:deleted', { id: _id })
+            io.to('admin:all').emit('product:deleted', { id: _id })
+        } catch (e) {}
 
         return response.json({
             message : "Delete successfully",

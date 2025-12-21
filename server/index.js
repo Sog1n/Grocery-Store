@@ -6,6 +6,8 @@ import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import connectDB from './config/connectDB.js'
+import { createServer } from 'http'
+import { initSocket } from './socket/index.js'
 import userRouter from './route/user.route.js'
 import categoryRouter from './route/category.route.js'
 import uploadRouter from './route/upload.router.js'
@@ -48,15 +50,26 @@ app.use("/api/cart",cartRouter)
 app.use("/api/address",addressRouter)
 app.use('/api/order',orderRouter)
 app.use('/api/admin',adminRouter)
-connectDB().then(async()=>{
-    // Tạo admin và user mặc định
-    // await seedUsers()
-    
-    // Tạo dữ liệu sản phẩm mẫu
-    // await seedProducts()
-    
-    app.listen(PORT,()=>{
-        console.log("Server is running",PORT)
+
+// Export app cho testing (KHÔNG connect DB, KHÔNG start server)
+export default app
+
+// Chỉ chạy server khi file này được chạy trực tiếp (không phải import)
+if (process.env.NODE_ENV !== 'test') {
+    connectDB().then(async()=>{
+        // Tạo admin và user mặc định
+        // await seedUsers()
+        
+        // Tạo dữ liệu sản phẩm mẫu
+        // await seedProducts()
+
+        // Create HTTP server and attach socket
+        const server = createServer(app)
+        await initSocket(server)
+
+        server.listen(PORT, ()=>{
+            console.log('Server is running', PORT)
+        })
     })
-})
+}
 

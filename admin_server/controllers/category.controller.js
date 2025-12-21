@@ -1,6 +1,7 @@
 import CategoryModel from "../models/category.model.js";
 import SubCategoryModel from "../models/subCategory.model.js";
 import ProductModel from "../models/product.model.js";
+import { getIO } from "../socket/index.js";
 
 export const AddCategoryController = async(request,response)=>{
     try {
@@ -19,7 +20,7 @@ export const AddCategoryController = async(request,response)=>{
             image
         })
 
-        const saveCategory = await addCategory.save()
+    const saveCategory = await addCategory.save()
 
         if(!saveCategory){
             return response.status(500).json({
@@ -28,6 +29,12 @@ export const AddCategoryController = async(request,response)=>{
                 success : false
             })
         }
+
+        try {
+            const io = getIO()
+            io.to('user:all').emit('category:created', { id: saveCategory._id, name: saveCategory.name })
+            io.to('admin:all').emit('category:created', { id: saveCategory._id })
+        } catch (e) {}
 
         return response.json({
             message : "Add Category",
@@ -75,6 +82,12 @@ export const updateCategoryController = async(request,response)=>{
            image 
         })
 
+        try {
+            const io = getIO()
+            io.to('user:all').emit('category:updated', { id: _id, changes: { name, image } })
+            io.to('admin:all').emit('category:updated', { id: _id, changes: { name, image } })
+        } catch (e) {}
+
         return response.json({
             message : "Updated Category",
             success : true,
@@ -115,6 +128,12 @@ export const deleteCategoryController = async(request,response)=>{
         }
 
         const deleteCategory = await CategoryModel.deleteOne({ _id : _id})
+
+        try {
+            const io = getIO()
+            io.to('user:all').emit('category:deleted', { id: _id })
+            io.to('admin:all').emit('category:deleted', { id: _id })
+        } catch (e) {}
 
         return response.json({
             message : "Delete category successfully",

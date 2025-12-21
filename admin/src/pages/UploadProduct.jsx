@@ -428,7 +428,7 @@ const UploadProduct = () => {
                   />
                 </div>
 
-                {/* Discount */}
+                {/* Discount 
                 <div className='grid gap-1'>
                   <label htmlFor='discount' className='font-medium'>Discount</label>
                   <input 
@@ -442,6 +442,7 @@ const UploadProduct = () => {
                     className='bg-blue-50 p-2 outline-none border focus-within:border-primary-200 rounded'
                   />
                 </div>
+                */}
 
                 {/* More details fields */}
                 {

@@ -1,4 +1,5 @@
 import SubCategoryModel from "../models/subCategory.model.js";
+import { getIO } from "../socket/index.js";
 
 export const AddSubCategoryController = async(request,response)=>{
     try {
@@ -20,6 +21,12 @@ export const AddSubCategoryController = async(request,response)=>{
 
         const createSubCategory = new SubCategoryModel(payload)
         const save = await createSubCategory.save()
+
+        try {
+            const io = getIO()
+            io.to('user:all').emit('subcategory:created', { id: save._id, name: save.name, category: save.category })
+            io.to('admin:all').emit('subcategory:created', { id: save._id })
+        } catch (e) {}
 
         return response.json({
             message : "Sub Category Created",
@@ -75,6 +82,12 @@ export const updateSubCategoryController = async(request,response)=>{
             category
         })
 
+        try {
+            const io = getIO()
+            io.to('user:all').emit('subcategory:updated', { id: _id, changes: { name, image, category } })
+            io.to('admin:all').emit('subcategory:updated', { id: _id, changes: { name } })
+        } catch (e) {}
+
         return response.json({
             message : 'Updated Successfully',
             data : updateSubCategory,
@@ -96,6 +109,12 @@ export const deleteSubCategoryController = async(request,response)=>{
         const { _id } = request.body 
         console.log("Id",_id)
         const deleteSub = await SubCategoryModel.findByIdAndDelete(_id)
+
+        try {
+            const io = getIO()
+            io.to('user:all').emit('subcategory:deleted', { id: _id })
+            io.to('admin:all').emit('subcategory:deleted', { id: _id })
+        } catch (e) {}
 
         return response.json({
             message : "Delete successfully",

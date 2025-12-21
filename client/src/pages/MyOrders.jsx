@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Axios from '../utils/Axios'
 import SummaryApi from '../common/SummaryApi'
 import AxiosToastError from '../utils/AxiosToastError'
@@ -12,6 +12,7 @@ const MyOrders = () => {
     const [loading, setLoading] = useState(false)
     const [showConfirmDialog, setShowConfirmDialog] = useState(false)
     const [selectedOrderId, setSelectedOrderId] = useState(null)
+    const [recentlyUpdated, setRecentlyUpdated] = useState(null)
     const [expandedSections, setExpandedSections] = useState({
         pending: true,
         confirmed: true,
@@ -19,6 +20,18 @@ const MyOrders = () => {
         delivered: false,
         cancelled: false
     })
+
+    // SocketManager đã xử lý order events và update Redux orders
+    // Component này chỉ cần đọc từ Redux store
+    
+    // Visual feedback when orders change via socket
+    useEffect(() => {
+        if (orders.length > 0) {
+            // Flash animation for recently updated orders
+            const timer = setTimeout(() => setRecentlyUpdated(null), 3000)
+            return () => clearTimeout(timer)
+        }
+    }, [orders])
 
     const toggleSection = (status) => {
         setExpandedSections(prev => ({
@@ -88,8 +101,9 @@ const MyOrders = () => {
 
             if (response.data.success) {
                 toast.success('CANCELLED')
+                setRecentlyUpdated(selectedOrderId)
                 closeCancelDialog()
-                window.location.reload()
+                // No need to reload - SocketManager will update Redux
             }
         } catch (error) {
             AxiosToastError(error)
@@ -99,11 +113,18 @@ const MyOrders = () => {
     }
 
     const renderOrderCard = (order, index) => {
+        const isRecentlyUpdated = recentlyUpdated === order._id
+        
         return (
-            <div key={order._id + index + "order"} className="order rounded p-4 text-sm border mb-4 bg-white shadow">
+            <div 
+                key={order._id + index + "order"} 
+                className={`order rounded p-4 text-sm border mb-4 bg-white shadow transition-all duration-300 ${
+                    isRecentlyUpdated ? 'ring-2 ring-blue-400 animate-pulse' : ''
+                }`}
+            >
                 <div className="flex justify-between items-center mb-3">
                     <p className="font-semibold">Order No : {order?.orderId}</p>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(order.order_status)}`}>
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(order.order_status)} transition-colors duration-300`}>
                         {getStatusText(order.order_status)}
                     </span>
                 </div>
