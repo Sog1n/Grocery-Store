@@ -5,8 +5,6 @@ THÀNH VIÊN NHÓM 2:
 + NGUYỄN PHƯƠNG VINH - 3122411053
 + LÊ NGỌC HIỆP - 3122411247
 
-![Banner](./Thumnails.png)
-
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-6.0+-green.svg)](https://www.mongodb.com/)
 [![React](https://img.shields.io/badge/React-18.3.1-blue.svg)](https://reactjs.org/)
